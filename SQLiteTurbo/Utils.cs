@@ -247,7 +247,7 @@ namespace SQLiteTurbo
         public static string GetSoftwareBuild()
         {
             Assembly assembly = Assembly.GetExecutingAssembly();
-            string ver = "" + assembly.GetName().Version.Build;
+            string ver = "datadiode " + assembly.GetName().Version.Build;
             return ver;
         }
 
