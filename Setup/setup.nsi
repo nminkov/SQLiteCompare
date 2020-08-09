@@ -12,17 +12,36 @@
   !include LogicLib.nsh
   !include nsDialogs.nsh
 
-
 ;--------------------------------
 ;Constants
+
   !define PRODUCT_NAME "SQLite Compare"
   !define PRODUCT_DISPLAY_NAME "SQLite Compare - Diff/Merge Utility"
+
+;--------------------------------
+;Version
+
+  !tempfile StdOut
+  !echo "${StdOut}"
+  !system '"git" describe --tags > ${StdOut}'
+  !searchparse /file  "${StdOut}" "v" VER_MAJOR "." VER_MINOR "." VER_BUILD "-"
+  !delfile "${StdOut}"
+  !undef StdOut
+
+  !define VERSION "${VER_MAJOR}.${VER_MINOR}.${VER_BUILD}"
+  VIProductVersion "${VERSION}.0"
+  VIFileVersion "${VERSION}.0"
+  VIAddVersionKey "ProductName" "${PRODUCT_NAME}"
+  VIAddVersionKey "ProductVersion" "${VERSION}"
+  VIAddVersionKey "FileVersion" "${VERSION}"
+  VIAddVersionKey "LegalCopyright" "https://web4.codeproject.com/Members/liron-levi"
 
 ;--------------------------------
 ;General
 
   ;Name and file
   Name "${PRODUCT_NAME}"
+  Caption "${PRODUCT_NAME} ${VERSION}"
   OutFile "SQLiteCompareSetup.exe"
 
   ;Default installation folder
@@ -59,8 +78,8 @@
     !define MUI_FINISHPAGE_RUN_FUNCTION "LaunchLink"
     !define MUI_FINISHPAGE_SHOWREADME_NOTCHECKED
     !define MUI_FINISHPAGE_SHOWREADME "$INSTDIR\readme.txt"
-    !define MUI_FINISHPAGE_LINK "https://github.com/shuebener/SQLiteCompare"
-    !define MUI_FINISHPAGE_LINK_LOCATION "https://github.com/shuebener/SQLiteCompare"
+    !define MUI_FINISHPAGE_LINK "https://github.com/datadiode/SQLiteCompare"
+    !define MUI_FINISHPAGE_LINK_LOCATION "https://github.com/datadiode/SQLiteCompare"
   !insertmacro MUI_PAGE_FINISH
 
   !insertmacro MUI_UNPAGE_CONFIRM
@@ -80,38 +99,10 @@ Section "Install" Install
 
   SetOverwrite ifnewer
 
-  ; Get Windows Installer if required
-;  ${If} $InstallWindowsInstaller == "Yes"
-;    SetDetailsView hide
-;    inetc::get /caption "Downloading Windows Installer 3.1" /canceltext "Cancel" "http://download.microsoft.com/download/1/4/7/147ded26-931c-4daf-9095-ec7baf996f46/WindowsInstaller-KB893803-v2-x86.exe" "$INSTDIR\WindowsInstaller-KB893803-v2-x86.exe" /end
-;    Pop $1
-;    ${If} $1 != "OK"
-;      Delete "$INSTDIR\WindowsInstaller-KB893803-v2-x86.exe"
-;      Abort "Installation cancelled."
-;    ${EndIf}
-;
-;    Marquee::start /NOUNLOAD /step=5 /interval=60 /top=70 /height=18 /width=12 "Installing Windows Installer 3.1 (may take a few minutes)"
-;    ExecWait '$INSTDIR\WindowsInstaller-KB893803-v2-x86.exe /quiet /norestart' $1
-;    Marquee::stop
-;    ${If} $1 != 0
-;      ${If} $1 == 3010
-;        SetRebootFlag true
-;        DetailPrint "Windows Installer 3.1 requires a system reboot.."
-;        Return
-;      ${Else}
-;        DetailPrint "Windows Installer 3.1 installation failed (error=$1). Please install Windows Installer 3.1 manually and rerun this setup."
-;        Abort "Installation failed. Please install Windows Installer 3.1 manually and rerun this setup."
-;      ${EndIf}
-;    ${EndIf}
-;    Delete "$INSTDIR\WindowsInstaller-KB893803-v2-x86.exe"
-;    SetDetailsView show
-;  ${EndIf}
-
   ; Get .NET if required
   ${If} $InstallDotNET == "Yes"
     SetDetailsView hide
-    ;;inetc::get /caption "Downloading .NET Framework 2.0" /canceltext "Cancel" "http://download.microsoft.com/download/5/6/7/567758a3-759e-473e-bf8f-52154438565a/dotnetfx.exe" "$INSTDIR\dotnetfx.exe" /end
-	inetc::get /caption "Downloading .NET Framework 4.6.2" /canceltext "Cancel" "https://download.microsoft.com/download/F/9/4/F942F07D-F26F-4F30-B4E3-EBD54FABA377/NDP462-KB3151800-x86-x64-AllOS-ENU.exe" "$INSTDIR\dotnetfx.exe" /end	
+    inetc::get /caption "Downloading .NET Framework 4.6.2" /canceltext "Cancel" "https://download.microsoft.com/download/F/9/4/F942F07D-F26F-4F30-B4E3-EBD54FABA377/NDP462-KB3151800-x86-x64-AllOS-ENU.exe" "$INSTDIR\dotnetfx.exe" /end	
     Pop $1
     ${If} $1 != "OK"
       Delete "$INSTDIR\dotnetfx.exe"
@@ -169,9 +160,6 @@ Section "Install" Install
   File "..\SQLiteTurbo\bin\x86\Release\x86\SQLite.Interop.dll"  
   SetOutPath "$INSTDIR"
 
-  ; Turn ON/OFF the check-updates flag
-  WriteRegDWORD HKCU "SOFTWARE\SQLiteCompare" "CheckUpdatesOnStartup" 1
-
   ; ADD registry entries for ADD/REMOVE panel
   WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\SQLiteCompare" \
                  "DisplayName" "${PRODUCT_DISPLAY_NAME}"
@@ -180,9 +168,9 @@ Section "Install" Install
   WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\SQLiteCompare" \
                  "Publisher" "Sebastian Huebener"
   WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\SQLiteCompare" \
-                 "URLInfoAbout" "https://github.com/shuebener/SQLiteCompare"
+                 "URLInfoAbout" "https://github.com/datadiode/SQLiteCompare"
   WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\SQLiteCompare" \
-                 "HelpLink" "https://github.com/shuebener/SQLiteCompare"
+                 "HelpLink" "https://github.com/datadiode/SQLiteCompare"
   WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\SQLiteCompare" \
                  "UninstallString" "$\"$INSTDIR\uninstall.exe$\""
 
