@@ -24,13 +24,13 @@
   !tempfile StdOut
   !echo "${StdOut}"
   !system '"git" describe --tags > ${StdOut}'
-  !searchparse /file  "${StdOut}" "v" VER_MAJOR "." VER_MINOR "." VER_BUILD "-"
+  !searchparse /file  "${StdOut}" "v" VER_MAJOR "." VER_MINOR "." VER_BUILD "-" VER_AHEAD "-"
   !delfile "${StdOut}"
   !undef StdOut
 
   !define VERSION "${VER_MAJOR}.${VER_MINOR}.${VER_BUILD}"
-  VIProductVersion "${VERSION}.0"
-  VIFileVersion "${VERSION}.0"
+  VIProductVersion "${VERSION}.${VER_AHEAD}"
+  VIFileVersion "${VERSION}.${VER_AHEAD}"
   VIAddVersionKey "ProductName" "${PRODUCT_NAME}"
   VIAddVersionKey "ProductVersion" "${VERSION}"
   VIAddVersionKey "FileVersion" "${VERSION}"
