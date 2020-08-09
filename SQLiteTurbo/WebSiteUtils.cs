@@ -7,24 +7,19 @@ namespace SQLiteTurbo
 {
     public class WebSiteUtils
     {
-        public static void OpenBuyPage()
-        {
-            OpenPage("http://sqlitecompare.com/Buy.html");
-        }
-
         public static void OpenBugFeaturePage()
         {
-            OpenPage("https://github.com/shuebener/SQLiteCompare/issues");
-        }
-
-        public static void OpenUserGuidePage()
-        {
-            OpenPage("http://sqlitecompare.com/GettingStarted.html");
+            OpenPage("https://github.com/datadiode/SQLiteCompare/issues");
         }
 
         public static void OpenProductPage()
         {
-            OpenPage("http://sqlitecompare.com");
+            OpenPage("https://github.com/datadiode/SQLiteCompare");
+        }
+
+        public static void OpenReleasesPage()
+        {
+            OpenPage("https://github.com/datadiode/SQLiteCompare/releases");
         }
 
         public static void OpenPage(string url)

@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Windows.Forms;
 using log4net;
 using log4net.Config;
-using AutomaticUpdates;
 
 // Configure log4net using the .config file
 [assembly: log4net.Config.XmlConfigurator(Watch = true)]
@@ -64,9 +63,6 @@ namespace SQLiteTurbo
                 // Remove all active change files
                 TableChanges.RemoveActiveChangeFiles();
             } // finally
-
-            // If there are pending software updates - apply them now
-            UpdateEngine.ApplyPendingUpdates();
         }
 
         private static void Application_ThreadException(object sender, ThreadExceptionEventArgs e)

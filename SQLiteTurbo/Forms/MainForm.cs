@@ -9,7 +9,6 @@ using System.Text;
 using System.Windows.Forms;
 using SQLiteParser;
 using Common;
-using AutomaticUpdates;
 using log4net;
 
 namespace SQLiteTurbo
@@ -168,40 +167,11 @@ namespace SQLiteTurbo
             {
                 RefreshComparison(true);
             }
-            else if (Configuration.FirstTime)
-            {
-                Configuration.FirstTime = false;
-
-                FirstTimeDialog fdlg = new FirstTimeDialog();
-                DialogResult res = fdlg.ShowDialog(this);
-                Configuration.CheckUpdatesOnStartup = fdlg.IsAutomaticUpdates;
-                if (res == DialogResult.OK)
-                {
-                    CheckUpdatesDialog cdlg = new CheckUpdatesDialog();
-                    cdlg.ShowDialog(this);
-                } // else
-            }
-            else
-            {
-                // Check for software updates if necessary
-                CheckSoftwareUpdates();
-            }
-        }
-
-        private void mniProductWebsite_Click(object sender, EventArgs e)
-        {
-            WebSiteUtils.OpenProductPage();
-        }
-
-        private void mniUserGuide_Click(object sender, EventArgs e)
-        {
-            WebSiteUtils.OpenUserGuidePage();
         }
 
         private void mniCheckForUpdates_Click(object sender, EventArgs e)
         {
-            CheckUpdatesDialog dlg = new CheckUpdatesDialog();
-            dlg.ShowDialog(this);
+            WebSiteUtils.OpenReleasesPage();
         }
 
         private void btnExportDataDifferences_Click(object sender, EventArgs e)
@@ -323,57 +293,6 @@ namespace SQLiteTurbo
             RefreshComparison(true);
         }
 
-        /// <summary>
-        /// Check if there are software updates and show the updates dialog if necessary
-        /// </summary>
-        private void CheckSoftwareUpdates()
-        {
-            // Check for software updates if necessary
-            if (Configuration.CheckUpdatesOnStartup)
-            {
-                mniCheckForUpdates.Enabled = false;
-                WaitCallback wc = delegate
-                {
-                    try
-                    {
-                        //List<VersionUpdateInfo> vlist = UpdateEngine.CheckForUpdates();
-                        List<VersionUpdateInfo> vlist = null;
-                        if (vlist != null)
-                        {
-                            // There are updates waiting
-                            Invoke(new MethodInvoker(delegate
-                            {
-                                CheckUpdatesDialog cdlg = new CheckUpdatesDialog();
-                                cdlg.ShowDownloadPage(this, vlist);
-                            }));
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        _log.Warn("failed to check for software updates", ex);
-                    } // catch
-                    finally
-                    {
-                        // The window may have been disposed as a result of shutting down the application.
-                        if (!UpdateEngine.IsReInstalling)
-                        {
-                            try
-                            {
-                                Invoke(new MethodInvoker(delegate
-                                {
-                                    mniCheckForUpdates.Enabled = true;
-                                }));
-                            }
-                            catch (ObjectDisposedException ode)
-                            {
-                                // Ignore
-                            }
-                        } // if
-                    } // finally
-                };
-                ThreadPool.QueueUserWorkItem(wc);
-            }
-        }
         #endregion
 
         #region Private Variables       
