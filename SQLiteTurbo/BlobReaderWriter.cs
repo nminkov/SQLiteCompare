@@ -856,7 +856,7 @@ namespace SQLiteTurbo
 
         #region Private Constants
         private const int PAGESIZE = 4096;
-        private const string SQLITE_DLL = "System.Data.SQLite.DLL";
+        private const string SQLITE_DLL = "SQLite.Interop.dll";
         private const int SQLITE_OPEN_READONLY = 0x00000001;
         #endregion
 
