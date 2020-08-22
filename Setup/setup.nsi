@@ -45,7 +45,7 @@
   OutFile "SQLiteCompareSetup.exe"
 
   ;Default installation folder
-  InstallDir "$PROGRAMFILES\SQLiteCompare"
+  InstallDir "$PROGRAMFILES64\SQLiteCompare"
 
   ;Request application privileges for Windows Vista
   RequestExecutionLevel admin
@@ -136,28 +136,26 @@ Section "Install" Install
   SetShellVarContext all
 
   ; Add the application files
-  File "..\SQLiteTurbo\bin\x86\Release\Alsing.SyntaxBox.dll"
-  File "..\SQLiteTurbo\bin\x86\Release\System.Data.SQLite.dll"
-  File "..\SQLiteTurbo\bin\x86\Release\System.Data.SQLite.EF6.dll"
-  File "..\SQLiteTurbo\bin\x86\Release\System.Data.SQLite.Linq.dll"
-  File "..\SQLiteTurbo\bin\x86\Release\SQLiteCompare.exe.config"
-  File "..\SQLiteTurbo\bin\x86\Release\SQLiteCompare.exe"
-  File "..\SQLiteTurbo\bin\x86\Release\Be.Windows.Forms.HexBox.dll"
-  File "..\SQLiteTurbo\bin\x86\Release\Common.dll"
-  File "..\SQLiteTurbo\bin\x86\Release\DiffControl.dll"
-  File "..\SQLiteTurbo\bin\x86\Release\FastGrid.dll"
-  File "..\SQLiteTurbo\bin\x86\Release\MultiPanelControl.dll"
-  File "..\SQLiteTurbo\bin\x86\Release\log4net.dll"
-  File "..\SQLiteTurbo\bin\x86\Release\ShiftReduceParser.dll"
-  File "..\SQLiteTurbo\bin\x86\Release\SQLiteParser.dll"
-  File "..\SQLiteTurbo\bin\x86\Release\UndoRedo.dll"
-  File "..\SQLiteTurbo\bin\x86\Release\EntityFramework.dll"
-  File "..\SQLiteTurbo\bin\x86\Release\EntityFramework.SqlServer.dll"
+  File "..\SQLiteTurbo\bin\Release\Alsing.SyntaxBox.dll"
+  File "..\SQLiteTurbo\bin\Release\System.Data.SQLite.dll"
+  File "..\SQLiteTurbo\bin\Release\SQLiteCompare.exe.config"
+  File "..\SQLiteTurbo\bin\Release\SQLiteCompare.exe"
+  File "..\SQLiteTurbo\bin\Release\Be.Windows.Forms.HexBox.dll"
+  File "..\SQLiteTurbo\bin\Release\Common.dll"
+  File "..\SQLiteTurbo\bin\Release\DiffControl.dll"
+  File "..\SQLiteTurbo\bin\Release\FastGrid.dll"
+  File "..\SQLiteTurbo\bin\Release\MultiPanelControl.dll"
+  File "..\SQLiteTurbo\bin\Release\log4net.dll"
+  File "..\SQLiteTurbo\bin\Release\ShiftReduceParser.dll"
+  File "..\SQLiteTurbo\bin\Release\SQLiteParser.dll"
+  File "..\SQLiteTurbo\bin\Release\UndoRedo.dll"
   File "..\readme.txt"
   File "..\LICENSE"
   
+  SetOutPath "$INSTDIR\x64"
+  File "..\SQLiteTurbo\bin\Release\x64\SQLite.Interop.dll"
   SetOutPath "$INSTDIR\x86"
-  File "..\SQLiteTurbo\bin\x86\Release\x86\SQLite.Interop.dll"  
+  File "..\SQLiteTurbo\bin\Release\x86\SQLite.Interop.dll"
   SetOutPath "$INSTDIR"
 
   ; ADD registry entries for ADD/REMOVE panel
@@ -214,8 +212,6 @@ Section "Uninstall"
   Delete "$INSTDIR\Uninstall.exe"
   Delete "$INSTDIR\Alsing.SyntaxBox.dll"
   Delete "$INSTDIR\System.Data.SQLite.dll"
-  Delete "$INSTDIR\System.Data.SQLite.EF6.dll"
-  Delete "$INSTDIR\System.Data.SQLite.Linq.dll"
   Delete "$INSTDIR\x64\SQLite.Interop.dll"
   Delete "$INSTDIR\x86\SQLite.Interop.dll"
   Delete "$INSTDIR\SQLiteCompare.exe.config"
@@ -229,8 +225,6 @@ Section "Uninstall"
   Delete "$INSTDIR\ShiftReduceParser.dll"
   Delete "$INSTDIR\SQLiteParser.dll"
   Delete "$INSTDIR\UndoRedo.dll"
-  Delete "$INSTDIR\EntityFramework.dll"
-  Delete "$INSTDIR\EntityFramework.SqlServer.dll"
   Delete "$INSTDIR\readme.txt"
   Delete "$INSTDIR\LICENSE"
 
