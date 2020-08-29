@@ -217,14 +217,15 @@ namespace SQLiteTurbo
                     _schemaView.SelectionChanged += new EventHandler(_schemaView_SelectionChanged);
                 }
 
+                _schemaView.ShowComparisonResults(results, _compareParams.LeftDbPath, _compareParams.RightDbPath,
+                    worker.LeftSchema, worker.RightSchema, _compareParams.ComparisonType == ComparisonType.CompareSchemaAndData);
+
                 _leftSchema = worker.LeftSchema;
                 _rightSchema = worker.RightSchema;
+                SchemaComparisonItem.CleanupTempFiles(_results);
                 _results = results;
                 _leftdb = _compareParams.LeftDbPath;
                 _rightdb = _compareParams.RightDbPath;
-
-                _schemaView.ShowComparisonResults(results, _compareParams.LeftDbPath, _compareParams.RightDbPath,
-                    worker.LeftSchema, worker.RightSchema, _compareParams.ComparisonType == ComparisonType.CompareSchemaAndData);
             }
 
             UpdateState();
@@ -252,7 +253,7 @@ namespace SQLiteTurbo
             _results = null;
 
             UpdateState();
-		}
+        }
 
         private void UpdateState()
         {
@@ -267,17 +268,10 @@ namespace SQLiteTurbo
             mniGotoNextDifference.Enabled = _schemaView != null && _schemaView.HasNextDiff();
             mniGotoPreviousDifference.Enabled = _schemaView != null && _schemaView.HasPreviousDiff();        
 
-            #region Allow change script generation only to commercial/evaluation users
-
-            bool allowedGenerateScripts = false;
-            allowedGenerateScripts = true;
-
-            mniGenerateChangeScriptLeftToRight.Enabled = _schemaView != null && allowedGenerateScripts;
-            mniGenerateChangeScriptRightToLeft.Enabled = _schemaView != null && allowedGenerateScripts;
+            mniGenerateChangeScriptLeftToRight.Enabled = _schemaView != null;
+            mniGenerateChangeScriptRightToLeft.Enabled = _schemaView != null;
             mniCloseComparison.Enabled = _schemaView != null;
-            btnExportDataDifferences.Enabled = _schemaView != null && _schemaView.HasDataDiffs() && allowedGenerateScripts;
-
-            #endregion
+            btnExportDataDifferences.Enabled = _schemaView != null && _schemaView.HasDataDiffs();
         }
 
         private void HandleCompareDialog()

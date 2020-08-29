@@ -150,6 +150,7 @@ namespace SQLiteTurbo
                     _item.ErrorMessage = dlg.Error.Message;
                 return;
             }
+            _tableChanges.Dispose();
             _tableChanges = (TableChanges)dlg.Result;
             if (!tbcViews.TabPages.Contains(tbpData))
                 tbcViews.TabPages.Add(tbpData);
@@ -501,7 +502,7 @@ namespace SQLiteTurbo
         private Font _italic;
         private Regex _nlrx = new Regex("\r\n|\n");
         private ILog _log = LogManager.GetLogger(typeof(TwoWayCompareEditDialog));
-		#endregion
+        #endregion
 
-	}
+    }
 }

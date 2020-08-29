@@ -83,6 +83,23 @@ namespace SQLiteTurbo
         }
         #endregion
 
+        /// <summary>
+        /// Cleanup any table changes leftovers
+        /// </summary>
+        /// <param name="result">The global comparison results object</param>
+        static public void CleanupTempFiles(Dictionary<SchemaObject, List<SchemaComparisonItem>> result)
+        {
+            if (result != null)
+            {
+                List<SchemaComparisonItem> tableItems = result[SchemaObject.Table];
+                foreach (SchemaComparisonItem item in tableItems)
+                {
+                    if (item.TableChanges != null)
+                        item.TableChanges.Dispose();
+                } // foreach
+            }
+        }
+
         #region Private Variables
         private string _name;
         private SQLiteDdlStatement _left;

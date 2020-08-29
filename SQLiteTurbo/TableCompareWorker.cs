@@ -88,13 +88,13 @@ namespace SQLiteTurbo
                     _result = null;
                     NotifyPrimaryProgress(true, 100, cex);
                 }
-				catch(ApplicationException ex)
-				{
-					_log.Error("failed to compare databases");
-					_result?.Dispose();
-					_result = null;
-					NotifyPrimaryProgress(true, 100, ex);
-				}
+                catch(ApplicationException ex)
+                {
+                    _log.Error("failed to compare databases");
+                    _result?.Dispose();
+                    _result = null;
+                    NotifyPrimaryProgress(true, 100, ex);
+                }
                 catch (Exception ex)
                 {
                     _log.Error("failed to compare databases", ex);
@@ -333,9 +333,9 @@ namespace SQLiteTurbo
                         rightTx.Rollback();
                         throw;
                     } // catch
-				} // using
-			} // using
-		}
+                } // using
+            } // using
+        }
 
         /// <summary>
         /// This method is used to compare the rows in the left table to the rows in the
@@ -445,8 +445,8 @@ namespace SQLiteTurbo
                         rightTx.Rollback();
                         throw;
                     } // catch
-				} // using
-			} // using
+                } // using
+            } // using
 
         }
         
@@ -652,8 +652,8 @@ namespace SQLiteTurbo
                         rightTx.Rollback();
                         throw;
                     } // catch
-				} // using
-			} // using
+                } // using
+            } // using
         }
 
         /// <summary>
@@ -746,8 +746,8 @@ namespace SQLiteTurbo
                         if (brw != null)
                             brw.Dispose();
                     }
-				} // using
-			} // using
+                } // using
+            } // using
         }
 
         /// <summary>
@@ -1105,8 +1105,8 @@ namespace SQLiteTurbo
         private string GetConnectionString(string fpath)
         {
             SQLiteConnectionStringBuilder sb = new SQLiteConnectionStringBuilder();
-			//sb.JournalMode = SQLiteJournalModeEnum.Wal;
-			sb.DataSource = fpath;
+            //sb.JournalMode = SQLiteJournalModeEnum.Wal;
+            sb.DataSource = fpath;
             //sb.UseUTF16Encoding = true;
             sb.ReadOnly = true;
 
