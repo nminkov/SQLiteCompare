@@ -1,9 +1,7 @@
 using System;
 using System.IO;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 using SQLiteParser;
@@ -332,101 +330,75 @@ namespace SQLiteTurbo
         {
             if (value == DBNull.Value || value == null)
             {
-                lblBlobSize.Text = "Blob contains 0KB";
-                if (tbp == tbpEditBlob)
-                {
-                    string fpath = Configuration.TempBlobFilePath;
-                    if (File.Exists(fpath))
-                        File.Delete(fpath);
-                    File.Create(fpath).Dispose();
-                    _blobProvider = new DynamicFileByteProvider(fpath);
-                    ucHexEditor.ByteProvider = _blobProvider;
-                }
-                else if (tbp == tbpEditDateTime)
+                if (tbp == tbpEditDateTime)
                     pnlDateTimeWarning.Visible = false;
 
                 return;
             }
 
-			if (tbp == tbpEditBlob)
-			{
-				if (value is Be.Windows.Forms.DynamicFileByteProvider)
-				{
-					_blobProvider = (Be.Windows.Forms.DynamicFileByteProvider)value;
-					ucHexEditor.ByteProvider = _blobProvider;
-				}
-				else
-				{
-					string fpath = Configuration.TempBlobFilePath;
-					if (File.Exists(fpath))
-						File.Delete(fpath);
-					File.Create(fpath).Dispose();
-					if (value is byte[])
-						File.WriteAllBytes(fpath, (byte[])value);
-					else
-						File.WriteAllText(fpath, value.ToString());
-					_blobProvider = new DynamicFileByteProvider(fpath);
-					ucHexEditor.ByteProvider = _blobProvider;
-				}
-				lblBlobSize.Text = "Blob contains " + Utils.FormatMemSize(_blobProvider.Length, MemFormat.KB);
-			}
-			else if (tbp == tbpEditBoolean)
-			{
-				rbtnTrue.Checked = Utils.ConvertStringToBoolean(value.ToString());
-				rbtnFalse.Checked = !Utils.ConvertStringToBoolean(value.ToString());
-			}
-			else if (tbp == tbpEditGuid)
-			{
-				if (value is Guid)
-					txtGuid.Text = ((Guid)value).ToString("D");
-				else if (value is string)
-				{
-					// Issue a warning panel!
-				}
-				else
-					throw new ArgumentException($"illegal value type [{value.GetType().FullName}]");
-			}
-			else if (tbp == tbpEditFloatingPoint)
-			{
-				if (value is float)
-					txtFloatingPoint.Text = ((float)value).ToString();
-				else if (value is double)
-					txtFloatingPoint.Text = ((double)value).ToString();
-				else if (value is decimal)
-					txtFloatingPoint.Text = ((decimal)value).ToString();
-				else if (value is string)
-					if (value.ToString() != "")
-						txtFloatingPoint.Text = Convert.ToDouble(value).ToString();
-					else
-						txtFloatingPoint.Text = "";
-				else
-					throw new ArgumentException($"Illegal value type [{value.GetType().FullName}]");
-			}
-			else if (tbp == tbpEditInteger)
-			{
-				if (value is sbyte)
-					numInteger.Value = (sbyte)value;
-				else if (value is byte)
-					numInteger.Value = (byte)value;
-				else if (value is short)
-					numInteger.Value = (short)value;
-				else if (value is ushort)
-					numInteger.Value = (ushort)value;
-				else if (value is int)
-					numInteger.Value = (int)value;
-				else if (value is uint)
-					numInteger.Value = (uint)value;
-				else if (value is long)
-					numInteger.Value = (long)value;
-				else if (value is ulong)
-					numInteger.Value = (ulong)value;
-				else if (value is string)
-					if (value.ToString() != "")
-						numInteger.Value = Convert.ToInt32(value);
-					else
-						numInteger.Value = 0;
-				else
-					throw new ArgumentException($"Illegal value type [{value.GetType().FullName}]");
+            if (tbp == tbpEditBlob)
+            {
+                _blobProvider = (Be.Windows.Forms.DynamicFileByteProvider)value;
+                ucHexEditor.ByteProvider = _blobProvider;
+                lblBlobSize.Text = "Blob contains " + Utils.FormatMemSize(_blobProvider.Length, MemFormat.KB);
+            }
+            else if (tbp == tbpEditBoolean)
+            {
+                rbtnTrue.Checked = Utils.ConvertStringToBoolean(value.ToString());
+                rbtnFalse.Checked = !Utils.ConvertStringToBoolean(value.ToString());
+            }
+            else if (tbp == tbpEditGuid)
+            {
+                if (value is Guid)
+                    txtGuid.Text = ((Guid)value).ToString("D");
+                else if (value is string)
+                {
+                    // Issue a warning panel!
+                }
+                else
+                    throw new ArgumentException($"illegal value type [{value.GetType().FullName}]");
+            }
+            else if (tbp == tbpEditFloatingPoint)
+            {
+                if (value is float)
+                    txtFloatingPoint.Text = ((float)value).ToString();
+                else if (value is double)
+                    txtFloatingPoint.Text = ((double)value).ToString();
+                else if (value is decimal)
+                    txtFloatingPoint.Text = ((decimal)value).ToString();
+                else if (value is string)
+                    if (value.ToString() != "")
+                        txtFloatingPoint.Text = Convert.ToDouble(value).ToString();
+                    else
+                        txtFloatingPoint.Text = "";
+                else
+                    throw new ArgumentException($"Illegal value type [{value.GetType().FullName}]");
+            }
+            else if (tbp == tbpEditInteger)
+            {
+                if (value is sbyte)
+                    numInteger.Value = (sbyte)value;
+                else if (value is byte)
+                    numInteger.Value = (byte)value;
+                else if (value is short)
+                    numInteger.Value = (short)value;
+                else if (value is ushort)
+                    numInteger.Value = (ushort)value;
+                else if (value is int)
+                    numInteger.Value = (int)value;
+                else if (value is uint)
+                    numInteger.Value = (uint)value;
+                else if (value is long)
+                    numInteger.Value = (long)value;
+                else if (value is ulong)
+                    numInteger.Value = (ulong)value;
+                else if (value is string)
+                    if (value.ToString() != "")
+                        numInteger.Value = Convert.ToInt32(value);
+                    else
+                        numInteger.Value = 0;
+                else
+                    throw new ArgumentException($"Illegal value type [{value.GetType().FullName}]");
             }
             else if (tbp == tbpEditText)
             {
