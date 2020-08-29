@@ -48,6 +48,8 @@ namespace SQLiteTurbo
             this.mergeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.mniGotoNextDifference = new System.Windows.Forms.ToolStripMenuItem();
             this.mniGotoPreviousDifference = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator7 = new System.Windows.Forms.ToolStripSeparator();
+            this.refreshToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.mniCheckForUpdates = new System.Windows.Forms.ToolStripMenuItem();
             this.mniReport = new System.Windows.Forms.ToolStripMenuItem();
@@ -89,6 +91,7 @@ namespace SQLiteTurbo
             // 
             // menuStrip1
             // 
+            this.menuStrip1.AccessibleName = "MenuStrip";
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fileToolStripMenuItem,
             this.editToolStripMenuItem,
@@ -102,6 +105,7 @@ namespace SQLiteTurbo
             // 
             // fileToolStripMenuItem
             // 
+            this.fileToolStripMenuItem.AccessibleName = "File";
             this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.mniCompare,
             this.mniCloseComparison,
@@ -116,6 +120,7 @@ namespace SQLiteTurbo
             // 
             // mniCompare
             // 
+            this.mniCompare.AccessibleName = "Compare";
             this.mniCompare.Image = ((System.Drawing.Image)(resources.GetObject("mniCompare.Image")));
             this.mniCompare.Name = "mniCompare";
             this.mniCompare.Size = new System.Drawing.Size(276, 22);
@@ -124,6 +129,7 @@ namespace SQLiteTurbo
             // 
             // mniCloseComparison
             // 
+            this.mniCloseComparison.AccessibleName = "Close";
             this.mniCloseComparison.Image = ((System.Drawing.Image)(resources.GetObject("mniCloseComparison.Image")));
             this.mniCloseComparison.Name = "mniCloseComparison";
             this.mniCloseComparison.Size = new System.Drawing.Size(276, 22);
@@ -137,6 +143,7 @@ namespace SQLiteTurbo
             // 
             // mniGenerateChangeScriptLeftToRight
             // 
+            this.mniGenerateChangeScriptLeftToRight.AccessibleName = "GenerateChangeScriptLeftToRight";
             this.mniGenerateChangeScriptLeftToRight.Image = ((System.Drawing.Image)(resources.GetObject("mniGenerateChangeScriptLeftToRight.Image")));
             this.mniGenerateChangeScriptLeftToRight.Name = "mniGenerateChangeScriptLeftToRight";
             this.mniGenerateChangeScriptLeftToRight.Size = new System.Drawing.Size(276, 22);
@@ -145,6 +152,7 @@ namespace SQLiteTurbo
             // 
             // mniGenerateChangeScriptRightToLeft
             // 
+            this.mniGenerateChangeScriptRightToLeft.AccessibleName = "GenerateChangeScriptRightToLeft";
             this.mniGenerateChangeScriptRightToLeft.Image = ((System.Drawing.Image)(resources.GetObject("mniGenerateChangeScriptRightToLeft.Image")));
             this.mniGenerateChangeScriptRightToLeft.Name = "mniGenerateChangeScriptRightToLeft";
             this.mniGenerateChangeScriptRightToLeft.Size = new System.Drawing.Size(276, 22);
@@ -158,6 +166,7 @@ namespace SQLiteTurbo
             // 
             // mniExit
             // 
+            this.mniExit.AccessibleName = "Exit";
             this.mniExit.Name = "mniExit";
             this.mniExit.Size = new System.Drawing.Size(276, 22);
             this.mniExit.Text = "E&xit";
@@ -165,6 +174,7 @@ namespace SQLiteTurbo
             // 
             // editToolStripMenuItem
             // 
+            this.editToolStripMenuItem.AccessibleName = "Edit";
             this.editToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.mniCopyFromLeftDB,
             this.mniCopyFromRightDB,
@@ -197,6 +207,7 @@ namespace SQLiteTurbo
             // 
             // mniEditSelection
             // 
+            this.mniEditSelection.AccessibleName = "EditSelectedItem";
             this.mniEditSelection.Image = ((System.Drawing.Image)(resources.GetObject("mniEditSelection.Image")));
             this.mniEditSelection.Name = "mniEditSelection";
             this.mniEditSelection.Size = new System.Drawing.Size(213, 22);
@@ -205,15 +216,19 @@ namespace SQLiteTurbo
             // 
             // mergeToolStripMenuItem
             // 
+            this.mergeToolStripMenuItem.AccessibleName = "View";
             this.mergeToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.mniGotoNextDifference,
-            this.mniGotoPreviousDifference});
+            this.mniGotoPreviousDifference,
+            this.toolStripSeparator7,
+            this.refreshToolStripMenuItem});
             this.mergeToolStripMenuItem.Name = "mergeToolStripMenuItem";
             this.mergeToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
             this.mergeToolStripMenuItem.Text = "&View";
             // 
             // mniGotoNextDifference
             // 
+            this.mniGotoNextDifference.AccessibleName = "NextDiff";
             this.mniGotoNextDifference.Image = ((System.Drawing.Image)(resources.GetObject("mniGotoNextDifference.Image")));
             this.mniGotoNextDifference.Name = "mniGotoNextDifference";
             this.mniGotoNextDifference.Size = new System.Drawing.Size(207, 22);
@@ -222,14 +237,30 @@ namespace SQLiteTurbo
             // 
             // mniGotoPreviousDifference
             // 
+            this.mniGotoPreviousDifference.AccessibleName = "PrevDiff";
             this.mniGotoPreviousDifference.Image = ((System.Drawing.Image)(resources.GetObject("mniGotoPreviousDifference.Image")));
             this.mniGotoPreviousDifference.Name = "mniGotoPreviousDifference";
             this.mniGotoPreviousDifference.Size = new System.Drawing.Size(207, 22);
             this.mniGotoPreviousDifference.Text = "Go to previous difference";
             this.mniGotoPreviousDifference.Click += new System.EventHandler(this.mniGotoPreviousDifference_Click);
             // 
+            // toolStripSeparator7
+            // 
+            this.toolStripSeparator7.Name = "toolStripSeparator7";
+            this.toolStripSeparator7.Size = new System.Drawing.Size(204, 6);
+            // 
+            // refreshToolStripMenuItem
+            // 
+            this.refreshToolStripMenuItem.AccessibleName = "Refresh";
+            this.refreshToolStripMenuItem.Name = "refreshToolStripMenuItem";
+            this.refreshToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F5;
+            this.refreshToolStripMenuItem.Size = new System.Drawing.Size(207, 22);
+            this.refreshToolStripMenuItem.Text = "Refresh";
+            this.refreshToolStripMenuItem.Click += new System.EventHandler(this.mniRefresh_Click);
+            // 
             // helpToolStripMenuItem
             // 
+            this.helpToolStripMenuItem.AccessibleName = "Help";
             this.helpToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.mniCheckForUpdates,
             this.mniReport,
@@ -263,6 +294,7 @@ namespace SQLiteTurbo
             // 
             // mniAbout
             // 
+            this.mniAbout.AccessibleName = "About";
             this.mniAbout.Image = ((System.Drawing.Image)(resources.GetObject("mniAbout.Image")));
             this.mniAbout.Name = "mniAbout";
             this.mniAbout.Size = new System.Drawing.Size(284, 22);
@@ -271,6 +303,7 @@ namespace SQLiteTurbo
             // 
             // toolStrip1
             // 
+            this.toolStrip1.AccessibleName = "ToolStrip";
             this.toolStrip1.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
             this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.btnCompare,
@@ -292,6 +325,7 @@ namespace SQLiteTurbo
             // 
             // btnCompare
             // 
+            this.btnCompare.AccessibleName = "Compare";
             this.btnCompare.Image = ((System.Drawing.Image)(resources.GetObject("btnCompare.Image")));
             this.btnCompare.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.btnCompare.ImageTransparentColor = System.Drawing.Color.Magenta;
@@ -307,6 +341,7 @@ namespace SQLiteTurbo
             // 
             // btnNextDiff
             // 
+            this.btnNextDiff.AccessibleName = "NextDiff";
             this.btnNextDiff.Image = ((System.Drawing.Image)(resources.GetObject("btnNextDiff.Image")));
             this.btnNextDiff.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.btnNextDiff.ImageTransparentColor = System.Drawing.Color.Magenta;
@@ -317,6 +352,7 @@ namespace SQLiteTurbo
             // 
             // btnPreviousDiff
             // 
+            this.btnPreviousDiff.AccessibleName = "PrevDiff";
             this.btnPreviousDiff.Image = ((System.Drawing.Image)(resources.GetObject("btnPreviousDiff.Image")));
             this.btnPreviousDiff.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.btnPreviousDiff.ImageTransparentColor = System.Drawing.Color.Magenta;
@@ -332,6 +368,7 @@ namespace SQLiteTurbo
             // 
             // btnCopyFromLeftDB
             // 
+            this.btnCopyFromLeftDB.AccessibleName = "CopyLeftToRight";
             this.btnCopyFromLeftDB.Image = ((System.Drawing.Image)(resources.GetObject("btnCopyFromLeftDB.Image")));
             this.btnCopyFromLeftDB.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.btnCopyFromLeftDB.ImageTransparentColor = System.Drawing.Color.Magenta;
@@ -342,6 +379,7 @@ namespace SQLiteTurbo
             // 
             // btnCopyFromRightDB
             // 
+            this.btnCopyFromRightDB.AccessibleName = "CopyRightToLeft";
             this.btnCopyFromRightDB.Image = ((System.Drawing.Image)(resources.GetObject("btnCopyFromRightDB.Image")));
             this.btnCopyFromRightDB.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.btnCopyFromRightDB.ImageTransparentColor = System.Drawing.Color.Magenta;
@@ -357,12 +395,13 @@ namespace SQLiteTurbo
             // 
             // btnEditSelectedDifference
             // 
+            this.btnEditSelectedDifference.AccessibleName = "EditSelectedItem";
             this.btnEditSelectedDifference.Image = ((System.Drawing.Image)(resources.GetObject("btnEditSelectedDifference.Image")));
             this.btnEditSelectedDifference.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.btnEditSelectedDifference.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnEditSelectedDifference.Name = "btnEditSelectedDifference";
-            this.btnEditSelectedDifference.Size = new System.Drawing.Size(166, 28);
-            this.btnEditSelectedDifference.Text = "Edit selected difference...";
+            this.btnEditSelectedDifference.Size = new System.Drawing.Size(137, 28);
+            this.btnEditSelectedDifference.Text = "Edit selected item...";
             this.btnEditSelectedDifference.Click += new System.EventHandler(this.btnEditSelectedDifference_Click);
             // 
             // toolStripSeparator9
@@ -372,6 +411,7 @@ namespace SQLiteTurbo
             // 
             // btnExportDataDifferences
             // 
+            this.btnExportDataDifferences.AccessibleName = "ExportDataDiffs";
             this.btnExportDataDifferences.Image = ((System.Drawing.Image)(resources.GetObject("btnExportDataDifferences.Image")));
             this.btnExportDataDifferences.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.btnExportDataDifferences.ImageTransparentColor = System.Drawing.Color.Magenta;
@@ -426,13 +466,8 @@ namespace SQLiteTurbo
         private System.Windows.Forms.ToolStrip toolStrip1;
         private System.Windows.Forms.Panel pnlContents;
         private System.Windows.Forms.ToolStripMenuItem mniCompare;
-        private System.Windows.Forms.ToolStripButton btnCompare;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
-        private System.Windows.Forms.ToolStripButton btnNextDiff;
-        private System.Windows.Forms.ToolStripButton btnPreviousDiff;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
-        private System.Windows.Forms.ToolStripButton btnCopyFromLeftDB;
-        private System.Windows.Forms.ToolStripButton btnCopyFromRightDB;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
         private System.Windows.Forms.ToolStripMenuItem mniCloseComparison;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
@@ -444,7 +479,6 @@ namespace SQLiteTurbo
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator5;
         private System.Windows.Forms.ToolStripMenuItem mniEditSelection;
         private System.Windows.Forms.ToolStripMenuItem mniAbout;
-        private System.Windows.Forms.ToolStripButton btnEditSelectedDifference;
         private System.Windows.Forms.ToolStripMenuItem mniCopyFromLeftDB;
         private System.Windows.Forms.ToolStripMenuItem mniReport;
         private System.Windows.Forms.ToolStripMenuItem mniGenerateChangeScriptLeftToRight;
@@ -453,6 +487,14 @@ namespace SQLiteTurbo
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator8;
         private System.Windows.Forms.ToolStripMenuItem mniCheckForUpdates;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator9;
+        private System.Windows.Forms.ToolStripButton btnCompare;
+        private System.Windows.Forms.ToolStripButton btnNextDiff;
+        private System.Windows.Forms.ToolStripButton btnPreviousDiff;
+        private System.Windows.Forms.ToolStripButton btnCopyFromLeftDB;
+        private System.Windows.Forms.ToolStripButton btnCopyFromRightDB;
+        private System.Windows.Forms.ToolStripButton btnEditSelectedDifference;
         private System.Windows.Forms.ToolStripButton btnExportDataDifferences;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator7;
+        private System.Windows.Forms.ToolStripMenuItem refreshToolStripMenuItem;
     }
 }

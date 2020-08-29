@@ -1,14 +1,10 @@
 using System;
-using System.Threading;
 using System.Collections;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
+using System.Runtime.InteropServices;
 using SQLiteParser;
-using Common;
 using log4net;
 
 namespace SQLiteTurbo
@@ -18,27 +14,53 @@ namespace SQLiteTurbo
     /// </summary>
     public partial class MainForm : Form
     {
-        public MainForm()
+        [DllImport("user32.dll")]
+        public static extern int SetWindowLong(IntPtr hWnd, int nIndex, int dwNewLong);
+        [DllImport("user32.dll")]
+        public static extern int GetWindowLong(IntPtr hWnd, int nIndex);
+        [DllImport("user32.dll", SetLastError = true)]
+        private static extern IntPtr SetParent(IntPtr hWndChild, IntPtr hWndNewParent);
+
+        public static int GWL_STYLE = -16;
+        public static int WS_CHILD = 0x40000000;
+
+        public void ParseArguments(IList arguments)
         {
-            InitializeComponent();
-            var arguments = new ArrayList(Environment.GetCommandLineArgs());
             var ctype = ComparisonType.CompareSchemaAndData;
             var compareBlobFields = false;
             int i;
-            if ((i = arguments.IndexOf("/CompareSchemaOnly", 1)) != -1)
+            if ((i = arguments.IndexOf("/ParentWindow")) != -1)
+            {
+                arguments.RemoveAt(i);
+                if (i < arguments.Count)
+                {
+                    IntPtr hwndParent = (IntPtr)Convert.ToInt64((string)arguments[i], 16);
+                    arguments.RemoveAt(i);
+                    FormBorderStyle = FormBorderStyle.None;
+                    CreateControl();
+                    SetWindowLong(Handle, GWL_STYLE, GetWindowLong(Handle, GWL_STYLE) | WS_CHILD);
+                    SetParent(Handle, hwndParent);
+                }
+            }
+            if ((i = arguments.IndexOf("/CompareSchemaOnly")) != -1)
             {
                 arguments.RemoveAt(i);
                 ctype = ComparisonType.CompareSchemaOnly;
             }
-            if ((i = arguments.IndexOf("/CompareBlobFields", 1)) != -1)
+            if ((i = arguments.IndexOf("/CompareBlobFields")) != -1)
             {
                 arguments.RemoveAt(i);
                 compareBlobFields = true;
             }
-            if (arguments.Count == 3)
+            if (arguments.Count == 2)
             {
-                _compareParams = new CompareParams((string)arguments[1], (string)arguments[2], ctype, compareBlobFields);
+                _compareParams = new CompareParams((string)arguments[0], (string)arguments[1], ctype, compareBlobFields);
             }
+        }
+ 
+        public MainForm()
+        {
+            InitializeComponent();
         }
 
         #region Event Handlers
@@ -56,6 +78,11 @@ namespace SQLiteTurbo
         private void mniCompare_Click(object sender, EventArgs e)
         {
             HandleCompareDialog();
+        }
+
+        private void mniRefresh_Click(object sender, EventArgs e)
+        {
+            RefreshComparison(true);
         }
 
         private void mniCloseComparison_Click(object sender, EventArgs e)
@@ -161,9 +188,13 @@ namespace SQLiteTurbo
         {
             UpdateTitle();
 
-            // The first time the software is ran - it should prompt the user if he wants to enable
-            // checking for software updates upon system startup
-            if (_compareParams != null)
+            if (FormBorderStyle == FormBorderStyle.None)
+            {
+                menuStrip1.Visible = false;
+                toolStrip1.Visible = false;
+                WindowState = FormWindowState.Maximized;
+            }
+            else if (_compareParams != null)
             {
                 RefreshComparison(true);
             }

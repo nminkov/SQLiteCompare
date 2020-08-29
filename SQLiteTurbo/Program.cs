@@ -1,5 +1,6 @@
 using System;
 using System.Threading;
+using System.Collections;
 using System.Collections.Generic;
 using System.Windows.Forms;
 using log4net;
@@ -12,6 +13,87 @@ namespace SQLiteTurbo
 {
     static class Program
     {
+        static Program()
+        {
+            Application.EnableVisualStyles();
+            Application.SetCompatibleTextRenderingDefault(false);
+        }
+        /// <summary>
+        /// https://github.com/adamabdelhamed/PowerArgs
+        /// Copyright (c) 2013 Adam Abdelhamed
+        /// SPDX-License-Identifier: MIT
+        /// Converts a single string that represents a command line to be executed into a string[], 
+        /// accounting for quoted arguments that may or may not contain spaces.
+        /// </summary>
+        /// <param name="commandLine">The raw arguments as a single string</param>
+        /// <returns>a converted string array with the arguments properly broken up</returns>
+        public static List<string> SplitCommandLine(string commandLine)
+        {
+            List<string> ret = new List<string>();
+            string currentArg = string.Empty;
+            bool insideDoubleQuotes = false;
+
+            for (int i = 0; i < commandLine.Length; i++)
+            {
+                var c = commandLine[i];
+
+                if (insideDoubleQuotes && c == '"')
+                {
+                    ret.Add(currentArg);
+                    currentArg = string.Empty;
+                    insideDoubleQuotes = !insideDoubleQuotes;
+                }
+                else if (!insideDoubleQuotes && c == ' ')
+                {
+                    if (currentArg.Length > 0)
+                    {
+                        ret.Add(currentArg);
+                        currentArg = string.Empty;
+                    }
+                }
+                else if (c == '"')
+                {
+                    insideDoubleQuotes = !insideDoubleQuotes;
+                }
+                else if (c == '\\' && i < commandLine.Length - 1 && commandLine[i + 1] == '"')
+                {
+                    currentArg += '"';
+                    i++;
+                }
+                else
+                {
+                    currentArg += c;
+                }
+            }
+
+            if (currentArg.Length > 0)
+            {
+                ret.Add(currentArg);
+            }
+
+            return ret;
+        }
+
+        static int Embed(String commandLine)
+        {
+            // Configure log4net
+            BasicConfigurator.Configure();
+            try
+            {
+                var mainForm = new MainForm();
+                var arguments = SplitCommandLine(commandLine);
+                mainForm.ParseArguments(arguments);
+                mainForm.Show();
+            }
+            catch (Exception ex)
+            {
+                UnexpectedErrorDialog dlg = new UnexpectedErrorDialog();
+                dlg.Error = ex;
+                Application.Run(dlg);
+            }
+            return 0;
+        }
+
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
@@ -46,9 +128,10 @@ namespace SQLiteTurbo
 
             try
             {
-                Application.EnableVisualStyles();
-                Application.SetCompatibleTextRenderingDefault(false);
                 _mainForm = new MainForm();
+                var arguments = new ArrayList(Environment.GetCommandLineArgs());
+                arguments.RemoveAt(0);
+                _mainForm.ParseArguments(arguments);
                 Application.Run(_mainForm);
                 _mainForm = null;
             }
@@ -116,7 +199,7 @@ namespace SQLiteTurbo
         }
 
         private static Mutex _mutex = null;
-        private static Form _mainForm = null;
+        private static MainForm _mainForm = null;
         private static ILog _log = LogManager.GetLogger("Program");
     }
 }
