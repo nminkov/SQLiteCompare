@@ -573,7 +573,7 @@ namespace FastGridApp
             if (!_valid)
                 return;
 
-            if (e.KeyCode == Keys.Tab)
+            if (e.KeyCode == Keys.Tab || e.KeyCode == Keys.Escape)
                 return;
 
             e.IsInputKey = true;

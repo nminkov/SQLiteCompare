@@ -29,7 +29,17 @@ namespace SQLiteTurbo
             _italic = new Font(this.Font, FontStyle.Italic);
         }
         #endregion
-
+        #region ProcessCmdKey
+        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+        {
+            if (keyData == Keys.Escape)
+            {
+                this.Close();
+                return true;
+            }
+            return base.ProcessCmdKey(ref msg, keyData);
+        }
+        #endregion
         #region Public Methods
         /// <summary>
         /// Prepare the dialog with the comparison item
@@ -157,21 +167,21 @@ namespace SQLiteTurbo
             tbcViews.SelectedTab = tbpData;
         }
 
-		private void btnLeftOrRight_Click(object sender, EventArgs e)
-		{
-			if (_nested)
-				return;
+        private void btnLeftOrRight_Click(object sender, EventArgs e)
+        {
+            if (_nested)
+                return;
 
-			_nested = true;
-			btnLeftOrRight.Checked = true;
-			btnExistsInLeft.Checked = btnExistsInRight.Checked = btnDifferent.Checked = btnSame.Checked = false;
-			_nested = false;
+            _nested = true;
+            btnLeftOrRight.Checked = true;
+            btnExistsInLeft.Checked = btnExistsInRight.Checked = btnDifferent.Checked = btnSame.Checked = false;
+            _nested = false;
 
-			// Request the table diff control to show only rows that exist in the right database table
-			UpdateDataTab();
-		}
+            // Request the table diff control to show only rows that exist in the right database table
+            UpdateDataTab();
+        }
 
-		private void btnExistsInLeft_Click(object sender, EventArgs e)
+        private void btnExistsInLeft_Click(object sender, EventArgs e)
         {
             if (_nested)
                 return;
@@ -352,7 +362,7 @@ namespace SQLiteTurbo
             long rightCount = _tableChanges.GetTotalChangesCount(new string[] { TableChanges.EXISTS_IN_RIGHT_TABLE_NAME });
             long diffCount = _tableChanges.GetTotalChangesCount(new string[] { TableChanges.DIFFERENT_ROWS_TABLE_NAME });
             long sameCount = _tableChanges.GetTotalChangesCount(new string[] { TableChanges.SAME_ROWS_TABLE_NAME });
-			long bothCount = _tableChanges.GetTotalChangesCount(new string[] { TableChanges.DIFFERENT_ROWS_TABLE_NAME, TableChanges.SAME_ROWS_TABLE_NAME });
+            long bothCount = _tableChanges.GetTotalChangesCount(new string[] { TableChanges.DIFFERENT_ROWS_TABLE_NAME, TableChanges.SAME_ROWS_TABLE_NAME });
 
             string qm = string.Empty;
             if (!precise)
@@ -370,8 +380,8 @@ namespace SQLiteTurbo
             btnExistsInRight.Text = $"({rightCount}{qm})";
             btnDifferent.Text = $"({diffCount}{qm})";
             btnSame.Text = $"({sameCount}{qm})";
-			btnLeftOrRight.Text = $"({bothCount}{qm})";
-		}
+            btnLeftOrRight.Text = $"({bothCount}{qm})";
+        }
 
         private void StartTableUpdate(string leftSQL, string rightSQL, bool skipNullRows)
         {
@@ -452,10 +462,10 @@ namespace SQLiteTurbo
                 return TableChanges.EXISTS_IN_LEFT_TABLE_NAME;
             if (btnExistsInRight.Checked)
                 return TableChanges.EXISTS_IN_RIGHT_TABLE_NAME;
-			if (btnLeftOrRight.Checked)
-				return TableChanges.EXISTS_IN_LEFT_OR_RIGHT_TABLE_NAME;
+            if (btnLeftOrRight.Checked)
+                return TableChanges.EXISTS_IN_LEFT_OR_RIGHT_TABLE_NAME;
 
-			throw new InvalidOperationException();
+            throw new InvalidOperationException();
         }
 
         private string FormatTitle(SchemaComparisonItem item)

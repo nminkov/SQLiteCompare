@@ -50,8 +50,11 @@ namespace SQLiteTurbo
             _results = results;
             UpdateView();
             ShowMatchingRows();
+            if (grdSchemaDiffs.Rows.Count != 0)
+                grdSchemaDiffs.Rows[0].Selected = true;
+            grdSchemaDiffs.Focus();
         }
-        
+
         /// <summary>
         /// Returns TRUE if there is another difference in the grid after the selected row.
         /// </summary>
@@ -365,6 +368,7 @@ namespace SQLiteTurbo
             dlg.SchemaChanged += new EventHandler(dlg_SchemaChanged);
             dlg.ShowDialog(this);
             dlg.SchemaChanged -= new EventHandler(dlg_SchemaChanged);
+            grdSchemaDiffs.Focus();
         }
 
         public void ExportDataDifferences()
@@ -1031,50 +1035,54 @@ namespace SQLiteTurbo
             UpdateChangesCount();
         }
 
+        private void SetCellColor(DataGridViewCell cell, Color color)
+        {
+            cell.Style.BackColor = color;
+            cell.Style.SelectionBackColor = ControlPaint.Dark(color, 0.25f);
+        }
+
         private void FormatRow(DataGridViewRow row)
         {
             SchemaComparisonItem item = (SchemaComparisonItem)row.Tag;
 
             row.Cells[2].Style.Font = this.Font;
             row.Cells[3].Style.Font = this.Font;
-            row.Cells[2].Style.BackColor = NORMAL_BGCOLOR;
-            row.Cells[3].Style.BackColor = NORMAL_BGCOLOR;
             row.Cells[2].Value = item.ObjectName;
             row.Cells[3].Value = item.ObjectName;
 
             if (item.ErrorMessage != null)
             {
-                row.Cells[2].Style.BackColor = COMPARISON_ERROR_COLOR;
-                row.Cells[3].Style.BackColor = COMPARISON_ERROR_COLOR;
+                SetCellColor(row.Cells[2], COMPARISON_ERROR_COLOR);
+                SetCellColor(row.Cells[3], COMPARISON_ERROR_COLOR);
             }
             else if (item.TableChanges != null && !item.TableChanges.SameTables)
             {
-                row.Cells[2].Style.BackColor = DIFFERENT_DATA_COLOR;
-                row.Cells[3].Style.BackColor = DIFFERENT_DATA_COLOR;
+                SetCellColor(row.Cells[2], DIFFERENT_DATA_COLOR);
+                SetCellColor(row.Cells[3], DIFFERENT_DATA_COLOR);
             }
             else if (item.Result == ComparisonResult.ExistsInLeftDB)
             {
                 row.Cells[3].Style.Font = _strikeout;
-                row.Cells[3].Style.BackColor = NOT_EXIST_COLOR;
+                SetCellColor(row.Cells[3], NOT_EXIST_COLOR);
             }
             else if (item.Result == ComparisonResult.ExistsInRightDB)
             {
                 row.Cells[2].Style.Font = _strikeout;
-                row.Cells[2].Style.BackColor = NOT_EXIST_COLOR;
+                SetCellColor(row.Cells[2], NOT_EXIST_COLOR);
             }
             else if (item.Result == ComparisonResult.DifferentSchema)
             {
-                row.Cells[2].Style.BackColor = DIFFERENT_SCHEMA_COLOR;
-                row.Cells[3].Style.BackColor = DIFFERENT_SCHEMA_COLOR;
+                SetCellColor(row.Cells[2], DIFFERENT_SCHEMA_COLOR);
+                SetCellColor(row.Cells[3], DIFFERENT_SCHEMA_COLOR);
             }
             else if (item.Result == ComparisonResult.Same)
             {
                 if (item.LeftDdlStatement == null)
                 {
                     row.Cells[2].Style.Font = _strikeout;
-                    row.Cells[2].Style.BackColor = NOT_EXIST_COLOR;
+                    SetCellColor(row.Cells[2], NOT_EXIST_COLOR);
                     row.Cells[3].Style.Font = _strikeout;
-                    row.Cells[3].Style.BackColor = NOT_EXIST_COLOR;
+                    SetCellColor(row.Cells[3], NOT_EXIST_COLOR);
                 }
             }
         }
@@ -1173,7 +1181,6 @@ namespace SQLiteTurbo
         #endregion
 
         #region Private Constants
-        private Color NORMAL_BGCOLOR = SystemColors.Window;
         private Color NOT_EXIST_COLOR = Color.LightGray;
         private Color DIFFERENT_SCHEMA_COLOR = Color.Khaki;
         private Color DIFFERENT_DATA_COLOR = Color.LightBlue;
