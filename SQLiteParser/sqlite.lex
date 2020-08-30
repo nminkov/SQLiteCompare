@@ -248,6 +248,10 @@ public int ParseId(string val)
 			return (int)Tokens.AND;
 		case "TEMPORARY":
 			return (int)Tokens.TEMPORARY;
+		case "NO":
+			return (int)Tokens.NO;
+		case "ACTION":
+			return (int)Tokens.ACTION;
 
 		default:
 			return (int)Tokens.ID;
