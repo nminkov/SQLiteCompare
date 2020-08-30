@@ -3,6 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
+using System.Windows.Automation;
+using System.Windows.Automation.Provider;
 using System.Runtime.InteropServices;
 using SQLiteParser;
 using log4net;
@@ -24,8 +26,9 @@ namespace SQLiteTurbo
         public static int GWL_STYLE = -16;
         public static int WS_CHILD = 0x40000000;
 
-        public void ParseArguments(IList arguments)
+        public DialogResult ParseArguments(IList arguments)
         {
+            var result = DialogResult.None;
             var ctype = ComparisonType.CompareSchemaAndData;
             var compareBlobFields = false;
             int i;
@@ -42,6 +45,11 @@ namespace SQLiteTurbo
                     SetParent(Handle, hwndParent);
                 }
             }
+            if ((i = arguments.IndexOf("/ShowCompareDialog")) != -1)
+            {
+                arguments.RemoveAt(i);
+                result = DialogResult.OK;
+            }
             if ((i = arguments.IndexOf("/CompareSchemaOnly")) != -1)
             {
                 arguments.RemoveAt(i);
@@ -56,8 +64,16 @@ namespace SQLiteTurbo
             {
                 _compareParams = new CompareParams((string)arguments[0], (string)arguments[1], ctype, compareBlobFields);
             }
+            if (result != DialogResult.None)
+            {
+                CompareDialog dlg = new CompareDialog();
+                dlg.CompareParams = _compareParams;
+                result = dlg.ShowDialog();
+                _compareParams = dlg.CompareParams;
+            }
+            return result;
         }
- 
+
         public MainForm()
         {
             InitializeComponent();
@@ -98,6 +114,13 @@ namespace SQLiteTurbo
         private void btnNextDiff_Click(object sender, EventArgs e)
         {
             _schemaView.MoveToNextDiff();
+        }
+
+        private void toolStripButton_EnabledChanged(object sender, EventArgs e)
+        {
+            AutomationEventArgs args = new AutomationEventArgs(InvokePatternIdentifiers.InvokedEvent);
+            var provider = AutomationInteropProvider.HostProviderFromHandle(toolStrip1.Handle);
+            AutomationInteropProvider.RaiseAutomationEvent(InvokePatternIdentifiers.InvokedEvent, provider, args);
         }
 
         private void btnPreviousDiff_Click(object sender, EventArgs e)

@@ -74,24 +74,24 @@ namespace SQLiteTurbo
             return ret;
         }
 
+        static int About(String commandLine)
+        {
+            var dlg = new AboutDialog();
+            dlg.ShowDialog();
+            return 0;
+        }
+
         static int Embed(String commandLine)
         {
+            // Exceptions in here will gracefully auto-translate to COM errors
             // Configure log4net
             BasicConfigurator.Configure();
-            try
-            {
-                var mainForm = new MainForm();
-                var arguments = SplitCommandLine(commandLine);
-                mainForm.ParseArguments(arguments);
+            var mainForm = new MainForm();
+            var arguments = SplitCommandLine(commandLine);
+            DialogResult result = mainForm.ParseArguments(arguments);
+            if (result != DialogResult.Cancel)
                 mainForm.Show();
-            }
-            catch (Exception ex)
-            {
-                UnexpectedErrorDialog dlg = new UnexpectedErrorDialog();
-                dlg.Error = ex;
-                Application.Run(dlg);
-            }
-            return 0;
+            return (int)result;
         }
 
         /// <summary>

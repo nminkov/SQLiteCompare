@@ -349,6 +349,7 @@ namespace SQLiteTurbo
             this.btnNextDiff.Size = new System.Drawing.Size(80, 28);
             this.btnNextDiff.Text = "Next diff";
             this.btnNextDiff.Click += new System.EventHandler(this.btnNextDiff_Click);
+            this.btnNextDiff.EnabledChanged += new System.EventHandler(this.toolStripButton_EnabledChanged);
             // 
             // btnPreviousDiff
             // 
@@ -360,6 +361,7 @@ namespace SQLiteTurbo
             this.btnPreviousDiff.Size = new System.Drawing.Size(79, 28);
             this.btnPreviousDiff.Text = "Prev diff";
             this.btnPreviousDiff.Click += new System.EventHandler(this.btnPreviousDiff_Click);
+            this.btnPreviousDiff.EnabledChanged += new System.EventHandler(this.toolStripButton_EnabledChanged);
             // 
             // toolStripSeparator2
             // 
@@ -403,6 +405,7 @@ namespace SQLiteTurbo
             this.btnEditSelectedDifference.Size = new System.Drawing.Size(137, 28);
             this.btnEditSelectedDifference.Text = "Edit selected item...";
             this.btnEditSelectedDifference.Click += new System.EventHandler(this.btnEditSelectedDifference_Click);
+            this.btnEditSelectedDifference.EnabledChanged += new System.EventHandler(this.toolStripButton_EnabledChanged);
             // 
             // toolStripSeparator9
             // 
@@ -419,6 +422,7 @@ namespace SQLiteTurbo
             this.btnExportDataDifferences.Size = new System.Drawing.Size(164, 28);
             this.btnExportDataDifferences.Text = "Export data differences...";
             this.btnExportDataDifferences.Click += new System.EventHandler(this.btnExportDataDifferences_Click);
+            this.btnExportDataDifferences.EnabledChanged += new System.EventHandler(this.toolStripButton_EnabledChanged);
             // 
             // pnlContents
             // 

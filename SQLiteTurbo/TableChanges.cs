@@ -66,16 +66,6 @@ namespace SQLiteTurbo
 
         #region Constructors
         /// <summary>
-        /// This static constructor is used to automatically delete any left-over change files
-        /// from the temporary folder.
-        /// </summary>
-        static TableChanges()
-        {
-            // Create a mutex for this application instance
-            _appmutex = new Mutex(false, "Global\\" + Utils.NormalizeName(_appid.ToString()));
-        }
-
-        /// <summary>
         /// Constructs a new table-changes object. Under the cover - this object creates
         /// a temporary database file that will be used to store all table differences.
         /// </summary>
@@ -1041,7 +1031,6 @@ namespace SQLiteTurbo
                         _addExistsInRight.Dispose();
                         _addSame.Dispose();
                         _addBoth.Dispose();
-                        //_tx.Dispose();
                         _main.Dispose();
                         _main = null;
                         if (!_inmemory)
@@ -1622,7 +1611,7 @@ namespace SQLiteTurbo
                     }
                 }
 
-				Utils.AssignParameterValue(insert.Parameters[pname], value);
+                Utils.AssignParameterValue(insert.Parameters[pname], value);
             } // for
 
             // Execute the insertion and get the ROWID of the inserted row.
@@ -2048,7 +2037,7 @@ namespace SQLiteTurbo
         private SQLiteCommand _addDifferent;
         private SQLiteCommand _addExistsInLeft;
         private SQLiteCommand _addExistsInRight;
-		private SQLiteCommand _addBoth;
+        private SQLiteCommand _addBoth;
 
         private Dictionary<string, int> _leftFieldIndexes = null;
         private Dictionary<string, int> _rightFieldIndexes = null;
@@ -2064,7 +2053,6 @@ namespace SQLiteTurbo
         private SQLiteCreateTableStatement _leftTable;
         private SQLiteCreateTableStatement _rightTable;
         private static Guid _appid = Guid.NewGuid();
-        private static Mutex _appmutex;
         private bool _precise = true;
         private static Regex _tchangeRx = new Regex(@"_G_([0-9A-Fa-f_]+)_G_");
         private static List<TableChanges> _activeChanges = new List<TableChanges>();
