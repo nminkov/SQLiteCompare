@@ -94,14 +94,16 @@ namespace SQLiteTurbo
                 {
                     grdSchemaDiffs.ClearSelection();
                     row.Selected = true;
+                    if (grdSchemaDiffs.CurrentCell != null)
+                        grdSchemaDiffs.CurrentCell = row.Cells[grdSchemaDiffs.CurrentCell.ColumnIndex];
                     grdSchemaDiffs.FirstDisplayedScrollingRowIndex = row.Index;
                     return;
-                }                
+                }
             } // for
         }
 
         /// <summary>
-        /// Returns TRUE if there is a previous difference before the 
+        /// Returns TRUE if there is a previous difference before the
         /// selected row.
         /// </summary>
         public bool HasPreviousDiff()
@@ -117,7 +119,7 @@ namespace SQLiteTurbo
                 SchemaComparisonItem item = (SchemaComparisonItem)row.Tag;
                 if (item.Result != ComparisonResult.Same || (item.TableChanges != null && !item.TableChanges.SameTables))
                     return true;
-            } // for            
+            } // for
             return false;
         }
 
@@ -139,11 +141,13 @@ namespace SQLiteTurbo
                 if (item.Result != ComparisonResult.Same || (item.TableChanges != null && !item.TableChanges.SameTables))
                 {
                     grdSchemaDiffs.ClearSelection();
-                    row.Selected = true;                    
+                    row.Selected = true;
+                    if (grdSchemaDiffs.CurrentCell != null)
+                        grdSchemaDiffs.CurrentCell = row.Cells[grdSchemaDiffs.CurrentCell.ColumnIndex];
                     grdSchemaDiffs.FirstDisplayedScrollingRowIndex = row.Index;
                     return;
                 }
-            } // for            
+            } // for
         }
 
         /// <summary>
@@ -481,7 +485,7 @@ namespace SQLiteTurbo
                 } // foreach
             } // foreach
 
-            // Update the number of changes still left                
+            // Update the number of changes still left
             lblTotalFound.Text = "" + count + " changes found";
         }
 
@@ -550,7 +554,7 @@ namespace SQLiteTurbo
 
             // Special treatment is required if the copied entity was a table. This is so
             // because when deleting a table - all of its associated triggers and indexes
-            // are deleted as well, and when copying a table - all of its associated 
+            // are deleted as well, and when copying a table - all of its associated
             // triggers and indexes are replacing the indexes and triggers in the target schema.
 
             if (item.LeftDdlStatement == null && orig != null && orig is SQLiteCreateTableStatement)
@@ -707,11 +711,11 @@ namespace SQLiteTurbo
                         // Add the trigger to the right database schema
                         SQLiteCreateTriggerStatement triggerCopy = (SQLiteCreateTriggerStatement)sci.LeftDdlStatement;
                         _leftSchema[SchemaObject.Trigger].Add(triggerCopy.ObjectName.ToString().ToLower(), triggerCopy);
-                    } // else                        
+                    } // else
                 } // foreach
             } // else
 
-            // Update the number of changes still left                
+            // Update the number of changes still left
             UpdateChangesCount();
         }
 
@@ -772,7 +776,7 @@ namespace SQLiteTurbo
 
             // Special treatment is required if the copied entity was a table. This is so
             // because when deleting a table - all of its associated triggers and indexes
-            // are deleted as well, and when copying a table - all of its associated 
+            // are deleted as well, and when copying a table - all of its associated
             // triggers and indexes are replacing the indexes and triggers in the target schema.
 
             if (item.RightDdlStatement == null && orig != null && orig is SQLiteCreateTableStatement)
@@ -929,17 +933,17 @@ namespace SQLiteTurbo
                         // Add the trigger to the right database schema
                         SQLiteCreateTriggerStatement triggerCopy = (SQLiteCreateTriggerStatement)sci.RightDdlStatement;
                         _rightSchema[SchemaObject.Trigger].Add(triggerCopy.ObjectName.ToString().ToLower(), triggerCopy);
-                    } // else                        
+                    } // else
                 } // foreach
             } // else
 
-            // Update the number of changes still left                
+            // Update the number of changes still left
             UpdateChangesCount();
         }
 
         private List<SQLiteCreateIndexStatement> ComputeIndexesExclusiveToTable(
-            SQLiteCreateTableStatement table1, 
-            Dictionary<SchemaObject, Dictionary<string, SQLiteDdlStatement>> schema1,             
+            SQLiteCreateTableStatement table1,
+            Dictionary<SchemaObject, Dictionary<string, SQLiteDdlStatement>> schema1,
             Dictionary<SchemaObject, Dictionary<string, SQLiteDdlStatement>> schema2)
         {
             List<SQLiteCreateIndexStatement> res = new List<SQLiteCreateIndexStatement>();
@@ -1100,7 +1104,7 @@ namespace SQLiteTurbo
                         stmt = item.RightDdlStatement;
 
                     grdSchemaDiffs.Rows.Add(GetItemImage(item), GetItemType(item), SQLiteParser.Utils.Chop(item.ObjectName),
-                        SQLiteParser.Utils.Chop(item.ObjectName));                    
+                        SQLiteParser.Utils.Chop(item.ObjectName));
                     DataGridViewRow row = grdSchemaDiffs.Rows[grdSchemaDiffs.Rows.Count - 1];
                     row.Tag = item;
 
@@ -1128,8 +1132,8 @@ namespace SQLiteTurbo
                     stmt is SQLiteCreateIndexStatement && cbxShowIndexDifferences.Checked ||
                     stmt is SQLiteCreateViewStatement && cbxShowViewDifferences.Checked ||
                     stmt is SQLiteCreateTriggerStatement && cbxShowTriggerDifferences.Checked;
-                bool diff = (cbxShowOnlyDifferences.Checked && 
-                    (item.Result != ComparisonResult.Same || (item.TableChanges != null && !item.TableChanges.SameTables))) || 
+                bool diff = (cbxShowOnlyDifferences.Checked &&
+                    (item.Result != ComparisonResult.Same || (item.TableChanges != null && !item.TableChanges.SameTables))) ||
                     !cbxShowOnlyDifferences.Checked;
                 match = match && diff;
 
