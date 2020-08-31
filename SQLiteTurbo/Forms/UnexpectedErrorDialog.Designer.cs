@@ -36,10 +36,6 @@ namespace SQLiteTurbo
             this.label3 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.txtErrorLog = new System.Windows.Forms.TextBox();
-            this.label5 = new System.Windows.Forms.Label();
-            this.txtLastActions = new System.Windows.Forms.TextBox();
-            this.label6 = new System.Windows.Forms.Label();
-            this.txtEmail = new System.Windows.Forms.TextBox();
             this.btnSend = new System.Windows.Forms.Button();
             this.etchedLine1 = new SQLiteTurbo.EtchedLine();
             this.label7 = new System.Windows.Forms.Label();
@@ -70,7 +66,7 @@ namespace SQLiteTurbo
             // btnClose
             // 
             this.btnClose.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.btnClose.Location = new System.Drawing.Point(387, 495);
+            this.btnClose.Location = new System.Drawing.Point(387, 395);
             this.btnClose.Name = "btnClose";
             this.btnClose.Size = new System.Drawing.Size(87, 23);
             this.btnClose.TabIndex = 5;
@@ -85,7 +81,7 @@ namespace SQLiteTurbo
             this.label4.Size = new System.Drawing.Size(375, 35);
             this.label4.TabIndex = 11;
             this.label4.Text = "Unfortunately an unexpected software error has occurred and the software needs to" +
-                " shutdown.";
+    " shutdown.";
             // 
             // label3
             // 
@@ -93,15 +89,13 @@ namespace SQLiteTurbo
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(375, 53);
             this.label3.TabIndex = 12;
-            this.label3.Text = "The software has prepared a detailed bug report and we would be grateful if you t" +
-                "ake the time to fill in some of the details so we can better diagnose and fix th" +
-                "e problem as soon as possible.";
+            this.label3.Text = resources.GetString("label3.Text");
             // 
             // label2
             // 
             this.label2.AutoSize = true;
             this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(177)));
-            this.label2.Location = new System.Drawing.Point(84, 137);
+            this.label2.Location = new System.Drawing.Point(84, 147);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(59, 13);
             this.label2.TabIndex = 13;
@@ -109,66 +103,27 @@ namespace SQLiteTurbo
             // 
             // txtErrorLog
             // 
-            this.txtErrorLog.Location = new System.Drawing.Point(87, 156);
+            this.txtErrorLog.Location = new System.Drawing.Point(87, 166);
             this.txtErrorLog.Multiline = true;
             this.txtErrorLog.Name = "txtErrorLog";
             this.txtErrorLog.ReadOnly = true;
             this.txtErrorLog.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.txtErrorLog.Size = new System.Drawing.Size(387, 130);
+            this.txtErrorLog.Size = new System.Drawing.Size(387, 153);
             this.txtErrorLog.TabIndex = 0;
-            // 
-            // label5
-            // 
-            this.label5.AutoSize = true;
-            this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(177)));
-            this.label5.Location = new System.Drawing.Point(84, 341);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(364, 13);
-            this.label5.TabIndex = 15;
-            this.label5.Text = "What was the last action you did before the problem occurred?";
-            // 
-            // txtLastActions
-            // 
-            this.txtLastActions.Location = new System.Drawing.Point(87, 360);
-            this.txtLastActions.MaxLength = 10000;
-            this.txtLastActions.Multiline = true;
-            this.txtLastActions.Name = "txtLastActions";
-            this.txtLastActions.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.txtLastActions.Size = new System.Drawing.Size(387, 54);
-            this.txtLastActions.TabIndex = 2;
-            // 
-            // label6
-            // 
-            this.label6.AutoSize = true;
-            this.label6.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(177)));
-            this.label6.Location = new System.Drawing.Point(84, 427);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(275, 13);
-            this.label6.TabIndex = 17;
-            this.label6.Text = "Your email address (if you want to get notified):";
-            // 
-            // txtEmail
-            // 
-            this.txtEmail.Location = new System.Drawing.Point(87, 446);
-            this.txtEmail.MaxLength = 512;
-            this.txtEmail.Name = "txtEmail";
-            this.txtEmail.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.txtEmail.Size = new System.Drawing.Size(387, 20);
-            this.txtEmail.TabIndex = 3;
             // 
             // btnSend
             // 
-            this.btnSend.Location = new System.Drawing.Point(268, 495);
+            this.btnSend.Location = new System.Drawing.Point(234, 395);
             this.btnSend.Name = "btnSend";
-            this.btnSend.Size = new System.Drawing.Size(113, 23);
+            this.btnSend.Size = new System.Drawing.Size(147, 23);
             this.btnSend.TabIndex = 4;
-            this.btnSend.Text = "Send the report";
+            this.btnSend.Text = "Visit the issue tracker";
             this.btnSend.UseVisualStyleBackColor = true;
             this.btnSend.Click += new System.EventHandler(this.btnSend_Click);
             // 
             // etchedLine1
             // 
-            this.etchedLine1.Location = new System.Drawing.Point(12, 479);
+            this.etchedLine1.Location = new System.Drawing.Point(12, 379);
             this.etchedLine1.Name = "etchedLine1";
             this.etchedLine1.Size = new System.Drawing.Size(462, 10);
             this.etchedLine1.TabIndex = 9;
@@ -178,7 +133,7 @@ namespace SQLiteTurbo
             // 
             this.label7.AutoSize = true;
             this.label7.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(177)));
-            this.label7.Location = new System.Drawing.Point(84, 292);
+            this.label7.Location = new System.Drawing.Point(84, 325);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(82, 13);
             this.label7.TabIndex = 18;
@@ -186,7 +141,7 @@ namespace SQLiteTurbo
             // 
             // txtLogFilePath
             // 
-            this.txtLogFilePath.Location = new System.Drawing.Point(87, 311);
+            this.txtLogFilePath.Location = new System.Drawing.Point(87, 344);
             this.txtLogFilePath.MaxLength = 512;
             this.txtLogFilePath.Name = "txtLogFilePath";
             this.txtLogFilePath.ReadOnly = true;
@@ -200,14 +155,10 @@ namespace SQLiteTurbo
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.btnClose;
-            this.ClientSize = new System.Drawing.Size(486, 533);
+            this.ClientSize = new System.Drawing.Size(486, 429);
             this.Controls.Add(this.txtLogFilePath);
             this.Controls.Add(this.label7);
             this.Controls.Add(this.btnSend);
-            this.Controls.Add(this.txtEmail);
-            this.Controls.Add(this.label6);
-            this.Controls.Add(this.txtLastActions);
-            this.Controls.Add(this.label5);
             this.Controls.Add(this.txtErrorLog);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label3);
@@ -241,10 +192,6 @@ namespace SQLiteTurbo
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.TextBox txtErrorLog;
-        private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.TextBox txtLastActions;
-        private System.Windows.Forms.Label label6;
-        private System.Windows.Forms.TextBox txtEmail;
         private System.Windows.Forms.Button btnSend;
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.TextBox txtLogFilePath;

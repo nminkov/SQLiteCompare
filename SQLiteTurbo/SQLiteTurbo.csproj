@@ -142,18 +142,6 @@
     <Compile Include="Forms\ExportChangesDialog.Designer.cs">
       <DependentUpon>ExportChangesDialog.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\FeedbackDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\FeedbackDialog.Designer.cs">
-      <DependentUpon>FeedbackDialog.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\HttpPostSenderDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\HttpPostSenderDialog.Designer.cs">
-      <DependentUpon>HttpPostSenderDialog.cs</DependentUpon>
-    </Compile>
     <Compile Include="Forms\IndefiniteProgressDialog.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -198,14 +186,6 @@
     <EmbeddedResource Include="Forms\ExportChangesDialog.resx">
       <SubType>Designer</SubType>
       <DependentUpon>ExportChangesDialog.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\FeedbackDialog.resx">
-      <SubType>Designer</SubType>
-      <DependentUpon>FeedbackDialog.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\HttpPostSenderDialog.resx">
-      <SubType>Designer</SubType>
-      <DependentUpon>HttpPostSenderDialog.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\IndefiniteProgressDialog.resx">
       <SubType>Designer</SubType>
@@ -291,7 +271,6 @@
     <Compile Include="SelectionBar.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="SendEmailWorker.cs" />
     <Compile Include="SpinningProgress.cs">
       <SubType>UserControl</SubType>
     </Compile>
