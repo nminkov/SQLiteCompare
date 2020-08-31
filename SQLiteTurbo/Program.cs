@@ -74,9 +74,10 @@ namespace SQLiteTurbo
             return ret;
         }
 
-        static int About(String commandLine)
+        static int About(String caption)
         {
             var dlg = new AboutDialog();
+            dlg.Text = caption;
             dlg.ShowDialog();
             return 0;
         }
