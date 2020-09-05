@@ -881,7 +881,12 @@ namespace DiffControl
             {
                 HandleBackPressed(line, col);
                 return;
-            } // else
+            }
+            else if (e.KeyCode == Keys.Delete)
+            {
+                HandleDeletePressed(line, col);
+                return;
+            }
             else if (e.KeyCode == Keys.Enter)
             {
                 HandleEnterPressed(line, col);
@@ -1615,6 +1620,25 @@ namespace DiffControl
                 if (SnapshotChanged != null)
                     SnapshotChanged(this, EventArgs.Empty);
             }
+        }
+
+        /// <summary>
+        /// Handle DELETE keypress events
+        /// </summary>
+        /// <param name="line">The line where the DELETE was clicked</param>
+        /// <param name="col">The column where the DELETE was clicked</param>
+        private void HandleDeletePressed(int line, int col)
+        {
+            if (_selection.IsEmpty)
+            {
+                if (++col > _lines[line].Text.Length)
+                {
+                    col = 0;
+                    if (++line >= _lines.Count)
+                        return;
+                }
+            }
+            HandleBackPressed(line, col);
         }
 
         /// <summary>
