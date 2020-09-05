@@ -1031,7 +1031,9 @@ namespace SQLiteTurbo
             SQLiteConnectionStringBuilder sb = new SQLiteConnectionStringBuilder();
             sb.DataSource = fpath;
             sb.ReadOnly = !writable;
-            return new SQLiteConnection(sb.ConnectionString);
+            var conn = new SQLiteConnection(sb.ConnectionString);
+            conn.Open();
+            return conn;
         }
 
         /// <summary>

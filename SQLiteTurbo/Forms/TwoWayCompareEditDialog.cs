@@ -30,13 +30,71 @@ namespace SQLiteTurbo
         }
         #endregion
         #region ProcessCmdKey
+        private bool ProcessCmdKeySchemaPage(Keys keyData)
+        {
+            switch (keyData)
+            {
+                case Keys.Control | Keys.S:
+                    btnUpdateSchema.PerformClick();
+                    return true;
+                case Keys.Control | Keys.D:
+                    btnCompareData.PerformClick();
+                    return true;
+                case Keys.Control | Keys.Z:
+                    btnUndo.PerformClick();
+                    return true;
+                case Keys.Control | Keys.Y:
+                    btnRedo.PerformClick();
+                    return true;
+                case Keys.Control | Keys.R:
+                    btnClearAllChanges.PerformClick();
+                    return true;
+                case Keys.Control | Keys.O:
+                    btnReorderColumns.PerformClick();
+                    return true;
+            }
+            return false;
+        }
+        private bool ProcessCmdKeyDataPage(Keys keyData)
+        {
+            switch (keyData)
+            {
+                case Keys.F5:
+                    btnRefreshComparison.PerformClick();
+                    return true;
+                case Keys.Control | Keys.L:
+                    btnExistsInLeft.PerformClick();
+                    return true;
+                case Keys.Control | Keys.R:
+                    btnExistsInRight.PerformClick();
+                    return true;
+                case Keys.Control | Keys.D:
+                    btnDifferent.PerformClick();
+                    return true;
+                case Keys.Control | Keys.S:
+                    btnSame.PerformClick();
+                    return true;
+                case Keys.Control | Keys.F:
+                    btnSearchData.PerformClick();
+                    return true;
+                case Keys.Control | Keys.E:
+                    btnExportDifferences.PerformClick();
+                    return true;
+            }
+            return false;
+        }
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
         {
-            if (keyData == Keys.Escape)
+            switch (keyData)
             {
-                this.Close();
-                return true;
+                case Keys.Escape:
+                    this.Close();
+                    return true;
             }
+            if (tbpSchema.Visible && ProcessCmdKeySchemaPage(keyData))
+                return true;
+            if (tbpData.Visible && ProcessCmdKeyDataPage(keyData))
+                return true;
             return base.ProcessCmdKey(ref msg, keyData);
         }
         #endregion
@@ -97,7 +155,6 @@ namespace SQLiteTurbo
             UpdateState();
         }
 
-
         private void TwoWayCompareEditDialog_Shown(object sender, EventArgs e)
         {
             ucDiff.Focus();
@@ -150,7 +207,7 @@ namespace SQLiteTurbo
                     _item.ErrorMessage = dlg.Error.Message;
                 return;
             }
-            _tableChanges.Dispose();
+            _tableChanges?.Dispose();
             _tableChanges = (TableChanges)dlg.Result;
             if (!tbcViews.TabPages.Contains(tbpData))
                 tbcViews.TabPages.Add(tbpData);
@@ -315,18 +372,6 @@ namespace SQLiteTurbo
             UpdateState();
         }
 
-        private void ucDiff_LeftSaveRequested(object sender, EventArgs e)
-        {
-            if (btnUpdateSchema.Enabled)
-                btnUpdateSchema_Click(btnUpdateSchema, EventArgs.Empty);
-        }
-
-        private void ucDiff_RightSaveRequested(object sender, EventArgs e)
-        {
-            if (btnUpdateSchema.Enabled)
-                btnUpdateSchema_Click(btnUpdateSchema, EventArgs.Empty);
-        }
-
         private void TwoWayCompareEditDialog_Load(object sender, EventArgs e)
         {
 
@@ -425,6 +470,13 @@ namespace SQLiteTurbo
 
             // Remove the data tab
             tbcViews.TabPages.Remove(tbpData);
+            // Invalidate the table changes
+            if (_tableChanges != null)
+            {
+                _tableChanges.Dispose();
+                _tableChanges = null;
+            }
+            _item.TableChanges = _tableChanges;
         }
 
         private void CompareSchema(SchemaComparisonItem item)

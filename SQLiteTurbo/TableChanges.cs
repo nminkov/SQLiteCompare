@@ -732,8 +732,6 @@ namespace SQLiteTurbo
             // Open a writeable connection to the database where rows will be deleted.
             using (SQLiteConnection to = Utils.MakeDbConnection(left ? _leftdb : _rightdb, true))
             {
-                to.Open();
-
                 SQLiteTransaction totx = to.BeginTransaction();
                 try
                 {
@@ -746,47 +744,26 @@ namespace SQLiteTurbo
                     int deleted = 0;
 
                     // Prepare the delete command
-                    SQLiteCommand del = new SQLiteCommand(
-                        @"DELETE FROM " + _tableName.ToString() + " WHERE RowID = @rowId", to, totx);
-                    del.Parameters.Add("@rowId", DbType.Int64);
-
-                    // Open the difference database for update
-                    BeginUpdate();
-
-                    // Disable triggers (should always remain disabled so I don't match this with
-                    // another statement to re-enable them)
-                    SQLiteCommand disable = new SQLiteCommand(
-                        @"PRAGMA DISABLE_TRIGGERS = 1", to, totx);
-                    disable.ExecuteNonQuery();
-
-                    // Go over the entire range(s) of deleted rows and delete each and every row
-                    foreach (TableChangesRange range in rows)
+                    using (SQLiteCommand del = new SQLiteCommand(
+                        @"DELETE FROM " + _tableName.ToString() + " WHERE RowID = @rowId", to, totx))
                     {
-                        if (range.StartRowId == range.EndRowId)
-                        {
-                            DeleteSingleRow(del, diff, range.StartRowId, left, ref totx);
-                            deleted++;
-                            _precise = false;
-                            if (deleted % MAX_PENDING_CHANGES == 0)
-                            {
-                                totx.Commit();
-                                totx = to.BeginTransaction();
-                                BeginUpdate();
-                            }
+                        del.Parameters.Add("@rowId", DbType.Int64);
 
-                            if (handler != null)
-                            {
-                                bool cancel = false;
-                                handler(deleted, total, ref cancel);
-                                if (cancel)
-                                    throw new UserCancellationException();
-                            }
-                        }
-                        else
+                        // Open the difference database for update
+                        BeginUpdate();
+
+                        // Disable triggers (should always remain disabled so I don't match this with
+                        // another statement to re-enable them)
+                        using (SQLiteCommand disable = new SQLiteCommand(
+                            @"PRAGMA DISABLE_TRIGGERS = 1", to, totx))
+                            disable.ExecuteNonQuery();
+
+                        // Go over the entire range(s) of deleted rows and delete each and every row
+                        foreach (TableChangesRange range in rows)
                         {
-                            for (long rowid = range.StartRowId; rowid <= range.EndRowId; rowid++)
+                            if (range.StartRowId == range.EndRowId)
                             {
-                                DeleteSingleRow(del, diff, rowid, left, ref totx);
+                                DeleteSingleRow(del, diff, range.StartRowId, left, ref totx);
                                 deleted++;
                                 _precise = false;
                                 if (deleted % MAX_PENDING_CHANGES == 0)
@@ -803,14 +780,37 @@ namespace SQLiteTurbo
                                     if (cancel)
                                         throw new UserCancellationException();
                                 }
-                            } // for
-                        } // else
-                    } // foreach
+                            }
+                            else
+                            {
+                                for (long rowid = range.StartRowId; rowid <= range.EndRowId; rowid++)
+                                {
+                                    DeleteSingleRow(del, diff, rowid, left, ref totx);
+                                    deleted++;
+                                    _precise = false;
+                                    if (deleted % MAX_PENDING_CHANGES == 0)
+                                    {
+                                        totx.Commit();
+                                        totx = to.BeginTransaction();
+                                        BeginUpdate();
+                                    }
 
-                    totx.Commit();
+                                    if (handler != null)
+                                    {
+                                        bool cancel = false;
+                                        handler(deleted, total, ref cancel);
+                                        if (cancel)
+                                            throw new UserCancellationException();
+                                    }
+                                } // for
+                            } // else
+                        } // foreach
 
-                    // Commit all changes done to the difference database
-                    EndUpdate();
+                        totx.Commit();
+
+                        // Commit all changes done to the difference database
+                        EndUpdate();
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -842,11 +842,9 @@ namespace SQLiteTurbo
 
             string dbpath = isLeft ? _leftdb : _rightdb;
             using (SQLiteConnection conn = Utils.MakeDbConnection(dbpath, false))
+            using (SQLiteCommand cmd = new SQLiteCommand(
+                @"SELECT EXISTS (SELECT * FROM " + _tableName + " WHERE RowID = @rowId AND (" + sql + "))", conn))
             {
-                conn.Open();
-
-                SQLiteCommand cmd = new SQLiteCommand(
-                    @"SELECT EXISTS (SELECT * FROM " + _tableName + " WHERE RowID = @rowId AND (" + sql + "))", conn);
                 cmd.Parameters.Add("@rowId", DbType.Int64);
 
                 long max = total;
@@ -899,8 +897,6 @@ namespace SQLiteTurbo
             // Open the database to copy rows from
             using (SQLiteConnection from = Utils.MakeDbConnection(leftToRight ? _leftdb : _rightdb, false))
             {
-                from.Open();
-
                 SQLiteTransaction fromtx = from.BeginTransaction(true);
 
                 try
@@ -908,8 +904,6 @@ namespace SQLiteTurbo
                     // Open the database to copy rows to
                     using (SQLiteConnection to = Utils.MakeDbConnection(leftToRight ? _rightdb : _leftdb, true))
                     {
-                        to.Open();
-
                         SQLiteTransaction totx = to.BeginTransaction();
 
                         try
@@ -927,9 +921,9 @@ namespace SQLiteTurbo
 
                             // Disable triggers (should always remain disabled so I don't match this with
                             // another statement to re-enable them)
-                            SQLiteCommand disable = new SQLiteCommand(
-                                @"PRAGMA DISABLE_TRIGGERS = 1", to, totx);
-                            disable.ExecuteNonQuery();
+                            using (SQLiteCommand disable = new SQLiteCommand(
+                                @"PRAGMA DISABLE_TRIGGERS = 1", to, totx))
+                                disable.ExecuteNonQuery();
 
                             // Go over the entire range(s) of copied rows and copy each and every row
                             foreach (TableChangesRange range in rows)
@@ -1200,12 +1194,9 @@ namespace SQLiteTurbo
         private long GetTableRowsCount(string dbpath, string tableName)
         {
             using (SQLiteConnection conn = Utils.MakeDbConnection(dbpath, false))
+            using (SQLiteCommand cmd = new SQLiteCommand("SELECT COUNT(*) FROM " + tableName, conn))
             {
-                conn.Open();
-                long count = 0;
-                using (SQLiteCommand cmd = new SQLiteCommand("SELECT COUNT(*) FROM " + tableName, conn))
-                    count = (long)cmd.ExecuteScalar();
-                return count;
+                return (long)cmd.ExecuteScalar();
             } // using
         }
 
@@ -1344,24 +1335,6 @@ namespace SQLiteTurbo
                 toRowId = citem.LeftRowId;
             }
 
-            // Prepare the INSERT command
-            SQLiteCommand insert = new SQLiteCommand(
-                $@"
-                INSERT INTO {_tableName}
-                    ({Utils.BuildColumnsString(common, false)})
-                VALUES
-                    ({Utils.BuildColumnParametersString(common)});
-                SELECT last_insert_rowid()
-                ",
-                totx.Connection, totx);
-            Utils.AddCommandColumnParameters(insert, common);
-
-            // Prepare the UPDATE command
-
-            // Prepare the DELETE command
-            SQLiteCommand del = new SQLiteCommand($"DELETE FROM {_tableName} WHERE RowID = @rowId", totx.Connection, totx);
-            del.Parameters.Add("@rowId", DbType.Int64);
-
             // There are 3 scenarios that need to be dealt with:
             // 1. The source database contains a row but the target database doesn't
             // 2. The source database contains a row and the target database contains a row
@@ -1371,12 +1344,27 @@ namespace SQLiteTurbo
                 if (toRowId == -1)
                 {
                     // If the target table does not have a row - we'll need to INSERT a new row
-                    InsertRowFrom(insert, citem, fromRowId, fromtx, ref totx, common, leftToRight, handler);
+                    using (SQLiteCommand insert = new SQLiteCommand($@"
+                        INSERT INTO {_tableName}
+                            ({Utils.BuildColumnsString(common, false)})
+                        VALUES
+                            ({Utils.BuildColumnParametersString(common)});
+                        SELECT last_insert_rowid()
+                        ",
+                        totx.Connection, totx))
+                    {
+                        Utils.AddCommandColumnParameters(insert, common);
+                        InsertRowFrom(insert, citem, fromRowId, fromtx, ref totx, common, leftToRight, handler);
+                    }
                 }
                 else
                 {
                     // If the target table does have a row - we'll have to delete it
-                    DeleteRowIn(del, citem, ref totx, toRowId, leftToRight);
+                    using (SQLiteCommand del = new SQLiteCommand($"DELETE FROM {_tableName} WHERE RowID = @rowId", totx.Connection, totx))
+                    {
+                        del.Parameters.Add("@rowId", DbType.Int64);
+                        DeleteRowIn(del, citem, ref totx, toRowId, leftToRight);
+                    }
                 }
 
                 // Update the change item to reflect the insertion
@@ -1410,75 +1398,74 @@ namespace SQLiteTurbo
             // chunking API
             List<SQLiteColumnStatement> blobs = null;
 
-            SQLiteCommand update = new SQLiteCommand();
-            StringBuilder sb = new StringBuilder();
-            for (int i = 0; i < common.Count; i++)
+            using (SQLiteCommand update = new SQLiteCommand())
             {
-                string colName = common[i].ObjectName.ToString();
-                string prmName = Utils.GetColumnParameterName(colName);
-                sb.Append(colName + " = " + prmName);
-                DbType dsttype = Utils.GetDbType(common[i].ColumnType);
-                update.Parameters.Add(prmName, dsttype);
-
-                SQLiteColumnStatement origCol = null;
-                if (dcols != null)
-                    origCol = Utils.GetColumnByName(dcols, colName);
-                DbType srctype = dsttype;
-                if (origCol != null)
-                    srctype = Utils.GetDbType(origCol.ColumnType);
-
-                // We have special treatment for BLOB fields - We'll set them to NULL if they are null in
-                // the source table, or we'll set them to a dummy non-null value and later
-                // use the BLOB chunking API to write them to the target row.
-                object value = citem.GetField(SQLiteParser.Utils.Chop(colName), leftToRight);
-                if (srctype == DbType.Binary)
+                StringBuilder sb = new StringBuilder();
+                for (int i = 0; i < common.Count; i++)
                 {
-                    // Since the actual value that gets stored in the table change item is either 0 (when the BLOB field is null)
-                    // or 1 (when the BLOB field is not null) - we'll have to translate this when inserting the row to the
-                    // target table.
-                    long notnull = (long)value;
-                    if (notnull == 1)
+                    string colName = common[i].ObjectName.ToString();
+                    string prmName = Utils.GetColumnParameterName(colName);
+                    sb.Append(colName + " = " + prmName);
+                    DbType dsttype = Utils.GetDbType(common[i].ColumnType);
+                    update.Parameters.Add(prmName, dsttype);
+
+                    SQLiteColumnStatement origCol = null;
+                    if (dcols != null)
+                        origCol = Utils.GetColumnByName(dcols, colName);
+                    DbType srctype = dsttype;
+                    if (origCol != null)
+                        srctype = Utils.GetDbType(origCol.ColumnType);
+
+                    // We have special treatment for BLOB fields - We'll set them to NULL if they are null in
+                    // the source table, or we'll set them to a dummy non-null value and later
+                    // use the BLOB chunking API to write them to the target row.
+                    object value = citem.GetField(SQLiteParser.Utils.Chop(colName), leftToRight);
+                    if (srctype == DbType.Binary)
                     {
-                        if (dsttype == DbType.Binary)
+                        // Since the actual value that gets stored in the table change item is either 0 (when the BLOB field is null)
+                        // or 1 (when the BLOB field is not null) - we'll have to translate this when inserting the row to the
+                        // target table.
+                        if (value.Equals("1"))
                         {
-                            Guid id = Guid.NewGuid();
-                            value = id.ToByteArray(); // Dummy value made from GUID in order to prevent possible UNIQUEness errors
-                            if (blobs == null)
-                                blobs = new List<SQLiteColumnStatement>();
-                            blobs.Add(common[i]);
+                            if (dsttype == DbType.Binary)
+                            {
+                                Guid id = Guid.NewGuid();
+                                value = id.ToByteArray(); // Dummy value made from GUID in order to prevent possible UNIQUEness errors
+                                if (blobs == null)
+                                    blobs = new List<SQLiteColumnStatement>();
+                                blobs.Add(common[i]);
+                            }
+                            else
+                            {
+                                // Another special case.. Here we can't simply copy the value that was retrieved
+                                // from the change item field because it only marks if the BLOB field is NULL or not.
+                                // We'll need to read the entire BLOB field into main memory and convert it to the
+                                // type of the destination column.
+                                using (BlobReaderWriter brw = new BlobReaderWriter(leftToRight ? _leftdb : _rightdb, true))
+                                {
+                                    value = brw.ReadBlob(_tableName.ToString(), colName, fromRowId);
+                                } // using
+                            } // else
                         }
                         else
                         {
-                            // Another special case.. Here we can't simply copy the value that was retrieved
-                            // from the change item field because it only marks if the BLOB field is NULL or not.
-                            // We'll need to read the entire BLOB field into main memory and convert it to the
-                            // type of the destination column.
-                            using (BlobReaderWriter brw = new BlobReaderWriter(leftToRight ? _leftdb : _rightdb, true))
-                            {
-                                value = brw.ReadBlob(_tableName.ToString(), colName, fromRowId);
-                            } // using
-                        } // else
-                    }
-                    else
-                    {
-                        value = DBNull.Value;
-                    }
-                } // if
+                            value = DBNull.Value;
+                        }
+                    } // if
 
-                Utils.AssignParameterValue(update.Parameters[prmName], value);
+                    Utils.AssignParameterValue(update.Parameters[prmName], value);
 
-                if (i < common.Count - 1)
-                    sb.Append(", ");
-            } // for
-            update.Parameters.Add("@rowId", DbType.Int64);
-            update.Parameters["@rowId"].Value = toRowId;
-            update.CommandText = @"UPDATE " + _tableName.ToString() + " SET " + sb.ToString() + " WHERE RowID = @rowId";
-            update.Connection = totx.Connection;
-            update.Transaction = totx;
-
-            // Execute the UPDATE command
-            update.ExecuteNonQuery();
-
+                    if (i < common.Count - 1)
+                        sb.Append(", ");
+                } // for
+                update.Parameters.Add("@rowId", DbType.Int64);
+                update.Parameters["@rowId"].Value = toRowId;
+                update.CommandText = @"UPDATE " + _tableName.ToString() + " SET " + sb.ToString() + " WHERE RowID = @rowId";
+                update.Connection = totx.Connection;
+                update.Transaction = totx;
+                // Execute the UPDATE command
+                update.ExecuteNonQuery();
+            }
             // Overwrite non-null BLOB fields using the chunking API
             OverwriteNonNullBlobs(ref totx, blobs, fromRowId, toRowId, leftToRight, handler);
 
@@ -1546,25 +1533,27 @@ namespace SQLiteTurbo
                 BeginUpdate();
             try
             {
-                SQLiteCommand updateItem = new SQLiteCommand(
+                using (SQLiteCommand updateItem = new SQLiteCommand(
                     "UPDATE " + diff + " SET RightRowID = @rightRowId, LeftRowID = @leftRowId, ComparisonResult = @result, ChangedBlobs = @changedBlobs WHERE RowID = @rowId",
-                    _main, _tx);
-                updateItem.Parameters.Add("@rightRowId", DbType.Int64);
-                updateItem.Parameters["@rightRowId"].Value = citem.RightRowId;
-                updateItem.Parameters.Add("@leftRowId", DbType.Int64);
-                updateItem.Parameters["@leftRowId"].Value = citem.LeftRowId;
-                updateItem.Parameters.Add("@result", DbType.Int64);
-                updateItem.Parameters["@result"].Value = (long)citem.Result;
-                updateItem.Parameters.Add("@rowId", DbType.Int64);
-                updateItem.Parameters["@rowId"].Value = citem.ChangeItemRowId;
-                updateItem.Parameters.Add("@changedBlobs", DbType.String);
-                if (citem.ChangedBlobsColumnNames != null)
-                    updateItem.Parameters["@changedBlobs"].Value = Serialize(citem.ChangedBlobsColumnNames);
-                else
-                    updateItem.Parameters["@changedBlobs"].Value = DBNull.Value;
-                updateItem.ExecuteNonQuery();
+                    _main, _tx))
+                {
+                    updateItem.Parameters.Add("@rightRowId", DbType.Int64);
+                    updateItem.Parameters["@rightRowId"].Value = citem.RightRowId;
+                    updateItem.Parameters.Add("@leftRowId", DbType.Int64);
+                    updateItem.Parameters["@leftRowId"].Value = citem.LeftRowId;
+                    updateItem.Parameters.Add("@result", DbType.Int64);
+                    updateItem.Parameters["@result"].Value = (long)citem.Result;
+                    updateItem.Parameters.Add("@rowId", DbType.Int64);
+                    updateItem.Parameters["@rowId"].Value = citem.ChangeItemRowId;
+                    updateItem.Parameters.Add("@changedBlobs", DbType.String);
+                    if (citem.ChangedBlobsColumnNames != null)
+                        updateItem.Parameters["@changedBlobs"].Value = Serialize(citem.ChangedBlobsColumnNames);
+                    else
+                        updateItem.Parameters["@changedBlobs"].Value = DBNull.Value;
+                    updateItem.ExecuteNonQuery();
+                }
 
-                if(commit)
+                if (commit)
                     EndUpdate();
             }
             catch (Exception nex)

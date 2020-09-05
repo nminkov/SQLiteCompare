@@ -22,16 +22,6 @@ namespace DiffControl
         /// Fired whenever the UNDO/REDO stacks change
         /// </summary>
         public event EventHandler UndoStateChanged;
-
-        /// <summary>
-        /// Request to save the left diff box
-        /// </summary>
-        public event EventHandler LeftSaveRequested;
-
-        /// <summary>
-        /// Request to save the right diff box
-        /// </summary>
-        public event EventHandler RightSaveRequested;
         #endregion
 
         #region Constructors
@@ -174,26 +164,6 @@ namespace DiffControl
         #endregion
 
         #region Event Handlers
-
-        private void ucLeftDiff_UndoRequested(object sender, EventArgs e)
-        {
-            Undo();
-        }
-
-        private void ucLeftDiff_RedoRequested(object sender, EventArgs e)
-        {
-            Redo();
-        }
-
-        private void ucRightDiff_UndoRequested(object sender, EventArgs e)
-        {
-            Undo();
-        }
-
-        private void ucRightDiff_RedoRequested(object sender, EventArgs e)
-        {
-            Redo();
-        }
 
         private void _undoManager_UndoStateChanged(object sender, EventArgs e)
         {
@@ -454,19 +424,6 @@ namespace DiffControl
             _lastCursorMove = ucRightDiff;
             UpdateState();
         }
-
-        private void ucRightDiff_SaveRequested(object sender, EventArgs e)
-        {
-            if (RightSaveRequested != null)
-                RightSaveRequested(this, EventArgs.Empty);
-        }
-
-        private void ucLeftDiff_SaveRequested(object sender, EventArgs e)
-        {
-            if (LeftSaveRequested != null)
-                LeftSaveRequested(this, EventArgs.Empty);
-        }
-
         #endregion
 
         #region Private Methods

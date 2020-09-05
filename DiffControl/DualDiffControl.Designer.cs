@@ -95,11 +95,8 @@ namespace DiffControl
             this.ucLeftDiff.Size = new System.Drawing.Size(348, 385);
             this.ucLeftDiff.TabIndex = 3;
             this.ucLeftDiff.Text = "diffEditBox2";
-            this.ucLeftDiff.UndoRequested += new System.EventHandler(this.ucLeftDiff_UndoRequested);
             this.ucLeftDiff.ScrollNeedsUpdate += new System.EventHandler(this.ucLeftDiff_ScrollNeedsUpdate);
-            this.ucLeftDiff.SaveRequested += new System.EventHandler(this.ucLeftDiff_SaveRequested);
             this.ucLeftDiff.MouseDown += new System.Windows.Forms.MouseEventHandler(this.ucLeftDiff_MouseDown);
-            this.ucLeftDiff.RedoRequested += new System.EventHandler(this.ucLeftDiff_RedoRequested);
             this.ucLeftDiff.LinesChanged += new System.EventHandler(this.ucLeftDiff_LinesChanged);
             this.ucLeftDiff.SnapshotChanging += new System.EventHandler(this.ucLeftDiff_SnapshotChanging);
             this.ucLeftDiff.SnapshotChanged += new System.EventHandler(this.ucLeftDiff_SnapshotChanged);
@@ -256,11 +253,8 @@ namespace DiffControl
             this.ucRightDiff.Size = new System.Drawing.Size(357, 385);
             this.ucRightDiff.TabIndex = 2;
             this.ucRightDiff.Text = "diffEditBox1";
-            this.ucRightDiff.UndoRequested += new System.EventHandler(this.ucRightDiff_UndoRequested);
             this.ucRightDiff.ScrollNeedsUpdate += new System.EventHandler(this.ucRightDiff_ScrollNeedsUpdate);
-            this.ucRightDiff.SaveRequested += new System.EventHandler(this.ucRightDiff_SaveRequested);
             this.ucRightDiff.MouseDown += new System.Windows.Forms.MouseEventHandler(this.ucRightDiff_MouseDown);
-            this.ucRightDiff.RedoRequested += new System.EventHandler(this.ucRightDiff_RedoRequested);
             this.ucRightDiff.LinesChanged += new System.EventHandler(this.ucRightDiff_LinesChanged);
             this.ucRightDiff.SnapshotChanging += new System.EventHandler(this.ucRightDiff_SnapshotChanging);
             this.ucRightDiff.SnapshotChanged += new System.EventHandler(this.ucRightDiff_SnapshotChanged);

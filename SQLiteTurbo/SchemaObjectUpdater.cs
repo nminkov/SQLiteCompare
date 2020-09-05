@@ -216,8 +216,6 @@ namespace SQLiteTurbo
             // re-create it using the updated sql schema
             using (SQLiteConnection conn = Utils.MakeDbConnection(dbpath, true))
             {
-                conn.Open();
-
                 SQLiteTransaction tx = conn.BeginTransaction();
                 try
                 {
@@ -809,8 +807,6 @@ namespace SQLiteTurbo
             // re-create it using the updated sql schema
             using (SQLiteConnection conn = Utils.MakeDbConnection(dbpath, true))
             {
-                conn.Open();
-
                 SQLiteTransaction tx = conn.BeginTransaction();
                 try
                 {
@@ -879,8 +875,6 @@ namespace SQLiteTurbo
             // re-create it using the updated sql schema
             using (SQLiteConnection conn = Utils.MakeDbConnection(dbpath, true))
             {
-                conn.Open();
-
                 SQLiteTransaction tx = conn.BeginTransaction();
                 try
                 {
@@ -944,8 +938,6 @@ namespace SQLiteTurbo
             // re-create it using the updated sql schema
             using (SQLiteConnection conn = Utils.MakeDbConnection(dbpath, true))
             {
-                conn.Open();
-
                 SQLiteTransaction tx = conn.BeginTransaction();
                 try
                 {

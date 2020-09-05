@@ -573,11 +573,6 @@ namespace FastGridApp
             if (!_valid)
                 return;
 
-            if (e.KeyCode == Keys.Tab || e.KeyCode == Keys.Escape)
-                return;
-
-            e.IsInputKey = true;
-
             if ((e.Modifiers & Keys.Shift) != 0)
                 _selectionMode = SelectionMode.RangeSelection;
             else if ((e.Modifiers & Keys.Control) != 0)
@@ -589,7 +584,7 @@ namespace FastGridApp
             {
                 if ((e.Modifiers & Keys.Shift) != 0)
                 {
-                    if (e.KeyCode == Keys.End)
+                    if (e.IsInputKey = e.KeyCode == Keys.End)
                     {
                         // Need to create a selection from the current location to the end
                         _selection.SetSelection(_currentRowId, _rowsCount-1);
@@ -609,12 +604,12 @@ namespace FastGridApp
                 }
                 else
                 {
-                    if (e.KeyCode == Keys.A)
+                    if (e.IsInputKey = e.KeyCode == Keys.A)
                     {                        
                         _selection.SetSelection(0, _rowsCount-1);
                         Invalidate();
                     }
-                    else if (e.KeyCode == Keys.F)
+                    else if (e.IsInputKey = e.KeyCode == Keys.F)
                     {
                         // Avoid having the selection caused by the search being extended as if the
                         // user pressed SHIFT key while clicking on the found row.
@@ -629,7 +624,7 @@ namespace FastGridApp
             {
                 if ((e.Modifiers & Keys.Shift) != 0)
                 {
-                    if (e.KeyCode == Keys.Down)
+                    if (e.IsInputKey = e.KeyCode == Keys.Down)
                     {
                         if (_currentRowId + 1 < _rowsCount)
                         {
@@ -647,7 +642,7 @@ namespace FastGridApp
                                 Scroll(this, EventArgs.Empty);
                         }
                     }
-                    else if (e.KeyCode == Keys.Up)
+                    else if (e.IsInputKey = e.KeyCode == Keys.Up)
                     {
                         if (_currentRowId - 1 >= 0)
                         {
@@ -665,7 +660,7 @@ namespace FastGridApp
                                 Scroll(this, EventArgs.Empty);
                         }
                     }
-                    else if (e.KeyCode == Keys.PageDown)
+                    else if (e.IsInputKey = e.KeyCode == Keys.PageDown)
                     {
                         if (_currentRowId + _pageSize >= _rowsCount)
                             _currentRowId = _rowsCount - 1;
@@ -687,7 +682,7 @@ namespace FastGridApp
                         if (Scroll != null)
                             Scroll(this, EventArgs.Empty);
                     }
-                    else if (e.KeyCode == Keys.PageUp)
+                    else if (e.IsInputKey = e.KeyCode == Keys.PageUp)
                     {
                         if (_currentRowId - _pageSize < 0)
                             _currentRowId = 0;
@@ -710,7 +705,7 @@ namespace FastGridApp
                 }
                 else
                 {
-                    if (e.KeyCode == Keys.Down)
+                    if (e.IsInputKey = e.KeyCode == Keys.Down)
                     {
                         if (_currentRowId + 1 < _rowsCount)
                         {
@@ -729,7 +724,7 @@ namespace FastGridApp
                                 Scroll(this, EventArgs.Empty);
                         }
                     }
-                    else if (e.KeyCode == Keys.Up)
+                    else if (e.IsInputKey = e.KeyCode == Keys.Up)
                     {
                         if (_currentRowId - 1 >= 0)
                         {
@@ -748,7 +743,7 @@ namespace FastGridApp
                                 Scroll(this, EventArgs.Empty);
                         }
                     }
-                    else if (e.KeyCode == Keys.PageDown)
+                    else if (e.IsInputKey = e.KeyCode == Keys.PageDown)
                     {
                         if (_currentRowId + _pageSize >= _rowsCount)
                             _currentRowId = _rowsCount - 1;
@@ -771,7 +766,7 @@ namespace FastGridApp
                         if (Scroll != null)
                             Scroll(this, EventArgs.Empty);
                     }
-                    else if (e.KeyCode == Keys.PageUp)
+                    else if (e.IsInputKey = e.KeyCode == Keys.PageUp)
                     {
                         if (_currentRowId - _pageSize < 0)
                             _currentRowId = 0;
@@ -792,7 +787,7 @@ namespace FastGridApp
                         if (Scroll != null)
                             Scroll(this, EventArgs.Empty);
                     }
-                    else if (e.KeyCode == Keys.Right)
+                    else if (e.IsInputKey = e.KeyCode == Keys.Right)
                     {
                         // Move selected cell one cell right
                         if (_selectedCellLocation.ColumnIndex < _columns.Count - 1)
@@ -803,7 +798,7 @@ namespace FastGridApp
 
                         Invalidate();
                     }
-                    else if (e.KeyCode == Keys.Left)
+                    else if (e.IsInputKey = e.KeyCode == Keys.Left)
                     {
                         // Move the selected cell one cell to the left
                         if (_selectedCellLocation.ColumnIndex > 0)
@@ -814,7 +809,7 @@ namespace FastGridApp
 
                         Invalidate();
                     }
-                    else if (e.KeyCode == Keys.Enter)
+                    else if (e.IsInputKey = e.KeyCode == Keys.Enter)
                     {
                         // Issue a EditStarted event
                         if (EditStarted != null)

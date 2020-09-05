@@ -100,8 +100,6 @@ namespace SQLiteTurbo
             this.ucDiff.Size = new System.Drawing.Size(855, 366);
             this.ucDiff.TabIndex = 1;
             this.ucDiff.UndoStateChanged += new System.EventHandler(this.ucDiff_UndoStateChanged);
-            this.ucDiff.LeftSaveRequested += new System.EventHandler(this.ucDiff_LeftSaveRequested);
-            this.ucDiff.RightSaveRequested += new System.EventHandler(this.ucDiff_RightSaveRequested);
             // 
             // toolStrip1
             // 
@@ -129,6 +127,7 @@ namespace SQLiteTurbo
             this.btnUpdateSchema.Name = "btnUpdateSchema";
             this.btnUpdateSchema.Size = new System.Drawing.Size(117, 28);
             this.btnUpdateSchema.Text = "Update schema";
+            this.btnUpdateSchema.ToolTipText = "Update schema (Ctrl+S)";
             this.btnUpdateSchema.Click += new System.EventHandler(this.btnUpdateSchema_Click);
             // 
             // btnCompareData
@@ -139,6 +138,7 @@ namespace SQLiteTurbo
             this.btnCompareData.Name = "btnCompareData";
             this.btnCompareData.Size = new System.Drawing.Size(110, 28);
             this.btnCompareData.Text = "Compare data";
+            this.btnCompareData.ToolTipText = "Compare data (Ctrl+D)";
             this.btnCompareData.Visible = false;
             this.btnCompareData.Click += new System.EventHandler(this.btnCompareData_Click);
             // 
@@ -155,6 +155,7 @@ namespace SQLiteTurbo
             this.btnUndo.Name = "btnUndo";
             this.btnUndo.Size = new System.Drawing.Size(64, 28);
             this.btnUndo.Text = "Undo";
+            this.btnUndo.ToolTipText = "Undo (Ctrl+Z)";
             this.btnUndo.Click += new System.EventHandler(this.btnUndo_Click);
             // 
             // btnRedo
@@ -165,6 +166,7 @@ namespace SQLiteTurbo
             this.btnRedo.Name = "btnRedo";
             this.btnRedo.Size = new System.Drawing.Size(62, 28);
             this.btnRedo.Text = "Redo";
+            this.btnRedo.ToolTipText = "Redo (Ctrl+Y)";
             this.btnRedo.Click += new System.EventHandler(this.btnRedo_Click);
             // 
             // btnClearAllChanges
@@ -173,8 +175,9 @@ namespace SQLiteTurbo
             this.btnClearAllChanges.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.btnClearAllChanges.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnClearAllChanges.Name = "btnClearAllChanges";
-            this.btnClearAllChanges.Size = new System.Drawing.Size(109, 28);
-            this.btnClearAllChanges.Text = "Clear changes";
+            this.btnClearAllChanges.Size = new System.Drawing.Size(68, 28);
+            this.btnClearAllChanges.Text = "Revert";
+            this.btnClearAllChanges.ToolTipText = "Revert (Ctrl+R)";
             this.btnClearAllChanges.Click += new System.EventHandler(this.btnClearAllChanges_Click);
             // 
             // toolStripSeparator3
@@ -190,6 +193,7 @@ namespace SQLiteTurbo
             this.btnReorderColumns.Name = "btnReorderColumns";
             this.btnReorderColumns.Size = new System.Drawing.Size(125, 28);
             this.btnReorderColumns.Text = "Reorder columns";
+            this.btnReorderColumns.ToolTipText = "Reorder columns (Ctrl+O)";
             this.btnReorderColumns.Click += new System.EventHandler(this.btnReorderColumns_Click);
             // 
             // tbpData
@@ -246,6 +250,7 @@ namespace SQLiteTurbo
             this.btnRefreshComparison.Name = "btnRefreshComparison";
             this.btnRefreshComparison.Size = new System.Drawing.Size(140, 28);
             this.btnRefreshComparison.Text = "Refresh comparison";
+            this.btnRefreshComparison.ToolTipText = "Refresh comparison (F5)";
             this.btnRefreshComparison.Click += new System.EventHandler(this.btnRefreshComparison_Click);
             // 
             // toolStripSeparator2
@@ -260,7 +265,7 @@ namespace SQLiteTurbo
             this.btnLeftOrRight.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnLeftOrRight.Name = "btnLeftOrRight";
             this.btnLeftOrRight.Size = new System.Drawing.Size(28, 28);
-            this.btnLeftOrRight.ToolTipText = "Show equal rows";
+            this.btnLeftOrRight.ToolTipText = "Show all rows";
             this.btnLeftOrRight.Visible = false;
             this.btnLeftOrRight.Click += new System.EventHandler(this.btnLeftOrRight_Click);
             // 
@@ -271,7 +276,7 @@ namespace SQLiteTurbo
             this.btnExistsInLeft.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnExistsInLeft.Name = "btnExistsInLeft";
             this.btnExistsInLeft.Size = new System.Drawing.Size(28, 28);
-            this.btnExistsInLeft.ToolTipText = "Show rows that exist only in the left database table";
+            this.btnExistsInLeft.ToolTipText = "Show rows that exist only in the left database table (Ctrl+L)";
             this.btnExistsInLeft.Click += new System.EventHandler(this.btnExistsInLeft_Click);
             // 
             // btnExistsInRight
@@ -281,7 +286,7 @@ namespace SQLiteTurbo
             this.btnExistsInRight.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnExistsInRight.Name = "btnExistsInRight";
             this.btnExistsInRight.Size = new System.Drawing.Size(28, 28);
-            this.btnExistsInRight.ToolTipText = "Show rows that exist only in the right database table";
+            this.btnExistsInRight.ToolTipText = "Show rows that exist only in the right database table (Ctrl+R)";
             this.btnExistsInRight.Click += new System.EventHandler(this.btnExistsInRight_Click);
             // 
             // btnDifferent
@@ -293,7 +298,7 @@ namespace SQLiteTurbo
             this.btnDifferent.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnDifferent.Name = "btnDifferent";
             this.btnDifferent.Size = new System.Drawing.Size(28, 28);
-            this.btnDifferent.ToolTipText = "Show different rows";
+            this.btnDifferent.ToolTipText = "Show different rows (Ctrl+D)";
             this.btnDifferent.Click += new System.EventHandler(this.btnDifferent_Click);
             // 
             // btnSame
@@ -303,7 +308,7 @@ namespace SQLiteTurbo
             this.btnSame.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnSame.Name = "btnSame";
             this.btnSame.Size = new System.Drawing.Size(28, 28);
-            this.btnSame.ToolTipText = "Show equal rows";
+            this.btnSame.ToolTipText = "Show equal rows (Ctrl+S)";
             this.btnSame.Click += new System.EventHandler(this.btnSame_Click);
             // 
             // toolStripSeparator4
@@ -319,7 +324,7 @@ namespace SQLiteTurbo
             this.btnSearchData.Name = "btnSearchData";
             this.btnSearchData.Size = new System.Drawing.Size(79, 28);
             this.btnSearchData.Text = "Search...";
-            this.btnSearchData.ToolTipText = "Search data rows (CTRL-F)";
+            this.btnSearchData.ToolTipText = "Search data rows (Ctrl+F)";
             this.btnSearchData.Click += new System.EventHandler(this.btnSearchData_Click);
             // 
             // toolStripSeparator5
@@ -335,7 +340,7 @@ namespace SQLiteTurbo
             this.btnExportDifferences.Name = "btnExportDifferences";
             this.btnExportDifferences.Size = new System.Drawing.Size(138, 28);
             this.btnExportDifferences.Text = "Export differences...";
-            this.btnExportDifferences.ToolTipText = "Search data rows (CTRL-F)";
+            this.btnExportDifferences.ToolTipText = "Export data differences (Ctrl+E)";
             this.btnExportDifferences.Click += new System.EventHandler(this.btnExportDifferences_Click);
             // 
             // imageList1

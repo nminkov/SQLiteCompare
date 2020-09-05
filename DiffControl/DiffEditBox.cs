@@ -22,9 +22,6 @@ namespace DiffControl
         public event EventHandler ScrollNeedsUpdate;
         public event EventHandler SnapshotChanging;
         public event EventHandler SnapshotChanged;
-        public event EventHandler UndoRequested;
-        public event EventHandler RedoRequested;
-        public event EventHandler SaveRequested;
         #endregion
 
         #region Constructors
@@ -895,11 +892,6 @@ namespace DiffControl
                 HandleCopyToClipboard();
                 return;
             }
-            else if (e.KeyCode == Keys.S && e.Control)
-            {
-                HandleSave();
-                return;
-            }
             else if (e.KeyCode == Keys.V && e.Control)
             {
                 HandlePasteFromClipboard();
@@ -915,18 +907,9 @@ namespace DiffControl
                 HandleSelectAll();
                 return;
             }
-            else if (e.Control && (e.KeyCode == Keys.Z || e.KeyCode == Keys.Y))
+            else if (e.Control)
             {
-                if (e.KeyCode == Keys.Z)
-                {
-                    if (UndoRequested != null)
-                        UndoRequested(this, EventArgs.Empty);
-                }
-                else
-                {
-                    if (RedoRequested != null)
-                        RedoRequested(this, EventArgs.Empty);
-                }
+                e.IsInputKey = false;
                 return;
             }
 
@@ -1070,28 +1053,6 @@ namespace DiffControl
                 range.SetRange(new DiffEditPosition(0, 0), new DiffEditPosition(_lines.Count - 1, _lines[_lines.Count - 1].Text.Length));
 
             return range;
-        }
-
-        /// <summary>
-        /// Notifies externals listeners that a SAVE was requested.
-        /// </summary>
-        private void HandleSave()
-        {
-            Timer tm = new Timer();
-            tm.Interval = 200;
-            tm.Tick += HandleSaveTimer;
-            tm.Start();
-        }
-
-        private void HandleSaveTimer(object sender, EventArgs e)
-        {
-            Timer tm = (Timer)sender;
-            tm.Stop();
-            tm.Tick -= HandleSaveTimer;            
-            tm.Dispose();
-
-            if (SaveRequested != null)
-                SaveRequested(this, EventArgs.Empty);
         }
 
         /// <summary>
