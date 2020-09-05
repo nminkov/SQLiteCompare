@@ -3,6 +3,7 @@ using System.Text.RegularExpressions;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Data;
 using System.Text;
 using System.Windows.Forms;
@@ -1039,6 +1040,34 @@ namespace SQLiteTurbo
             UpdateChangesCount();
         }
 
+        private void grdSchemaDiffs_CellPainting(object sender, DataGridViewCellPaintingEventArgs e)
+        {
+            if (e.RowIndex != -1)
+            {
+                DataGridViewRow row = grdSchemaDiffs.Rows[e.RowIndex];
+                SchemaComparisonItem item = (SchemaComparisonItem)row.Tag;
+                if (e.ColumnIndex > 1 &&
+                    item.Result == ComparisonResult.DifferentSchema &&
+                    item.TableChanges != null && !item.TableChanges.SameTables)
+                {
+                    var foreColor = DIFFERENT_DATA_COLOR;
+                    var backColor = DIFFERENT_SCHEMA_COLOR;
+                    if (row.Selected)
+                    {
+                        foreColor = ControlPaint.Dark(foreColor, 0.25f);
+                        backColor = ControlPaint.Dark(backColor, 0.25f);
+                    }
+                    using (HatchBrush brush = new HatchBrush(
+                        HatchStyle.WideUpwardDiagonal, foreColor, backColor))
+                    {
+                        e.Graphics.FillRectangle(brush, e.CellBounds);
+                    }
+                    e.PaintContent(e.CellBounds);
+                    e.Handled = true;
+                }
+            }
+        }
+ 
         private void SetCellColor(DataGridViewCell cell, Color color)
         {
             cell.Style.BackColor = color;

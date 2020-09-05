@@ -81,6 +81,7 @@ namespace SQLiteTurbo
             this.grdSchemaDiffs.TabIndex = 0;
             this.grdSchemaDiffs.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.grdSchemaDiffs_CellDoubleClick);
             this.grdSchemaDiffs.SelectionChanged += new System.EventHandler(this.grdSchemaDiffs_SelectionChanged);
+            this.grdSchemaDiffs.CellPainting += new System.Windows.Forms.DataGridViewCellPaintingEventHandler(this.grdSchemaDiffs_CellPainting);
             // 
             // Column1
             // 
