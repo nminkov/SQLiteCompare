@@ -9,6 +9,7 @@ using System.Reflection;
 using System.Diagnostics;
 using SQLiteParser;
 using System.Linq;
+using System.Globalization;
 
 namespace SQLiteTurbo
 {
@@ -33,7 +34,7 @@ namespace SQLiteTurbo
         /// SQLite file</returns>
         public static float GetSQLiteVersion(string fpath)
         {
-			int index = 0;
+            int index = 0;
             byte[] buffer = new byte[1024];
             using (FileStream fs = File.Open(fpath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
             {                
@@ -61,7 +62,7 @@ namespace SQLiteTurbo
             if (m.Success)
             {
                 float res;
-                if (float.TryParse(m.Groups[1].Value, out res))
+                if (float.TryParse(m.Groups[1].Value, NumberStyles.Any, CultureInfo.InvariantCulture, out res))
                     return res;
                 else
                     return -1F;
@@ -73,7 +74,7 @@ namespace SQLiteTurbo
             if (m.Success)
             {
                 float res;
-                if (float.TryParse(m.Groups[1].Value, out res))
+                if (float.TryParse(m.Groups[1].Value, NumberStyles.Any, CultureInfo.InvariantCulture, out res))
                     return res;
             }
 
@@ -1321,6 +1322,7 @@ namespace SQLiteTurbo
             Dictionary<Type, ValueConverter> strcon = new Dictionary<Type, ValueConverter>();
             strcon.Add(typeof(byte[]), delegate(object value) { return Encoding.ASCII.GetString((byte[])value); });
             strcon.Add(typeof(bool), delegate(object value) { return (bool)value ? "1" : "0"; });
+            strcon.Add(typeof(DateTime), delegate (object value) { return ((DateTime)value).ToString("yyyy-MM-dd HH:mm:ss"); });
 
             _converters.Add(DbType.AnsiString, strcon);
             _converters.Add(DbType.AnsiStringFixedLength, strcon);
@@ -1356,7 +1358,7 @@ namespace SQLiteTurbo
             {
                 DateTime dt;
                 string str = (string)value;
-                if (DateTime.TryParse(str, out dt))
+                if (DateTime.TryParse(str, CultureInfo.InvariantCulture, DateTimeStyles.NoCurrentDateDefault, out dt))
                     return dt;
                 else
                 {
@@ -1442,7 +1444,7 @@ namespace SQLiteTurbo
             numcon.Add(typeof(string), delegate(object value) 
             {
                 long lval = 0;
-                long.TryParse((string)value, out lval);
+                long.TryParse((string)value, NumberStyles.Any, CultureInfo.InvariantCulture, out lval);
                 return lval; 
             });
             numcon.Add(typeof(DateTime), delegate(object value)
@@ -1468,7 +1470,7 @@ namespace SQLiteTurbo
             singcon.Add(typeof(string), delegate(object value)
             {
                 float fval = 0;
-                float.TryParse((string)value, out fval);
+                float.TryParse((string)value, NumberStyles.Any, CultureInfo.InvariantCulture, out fval);
                 return fval;
             });
             singcon.Add(typeof(DateTime), delegate(object value)
@@ -1489,7 +1491,7 @@ namespace SQLiteTurbo
             doubcon.Add(typeof(string), delegate(object value)
             {
                 double dval = 0;
-                double.TryParse((string)value, out dval);
+                double.TryParse((string)value, NumberStyles.Any, CultureInfo.InvariantCulture, out dval);
                 return dval;
             });
             doubcon.Add(typeof(float), delegate(object value)
