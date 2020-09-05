@@ -286,8 +286,9 @@ namespace SQLiteTurbo
             List<SQLiteColumnStatement> checkColumns = null;
 
             // Check if the original table is empty or not.
-            SQLiteCommand cntcmd = new SQLiteCommand(@"SELECT COUNT(*) FROM " + orig.ObjectName.ToString(), conn, tx);
-            long count = (long)cntcmd.ExecuteScalar();
+            long count = 0;
+            using (SQLiteCommand cntcmd = new SQLiteCommand(@"SELECT COUNT(*) FROM " + orig.ObjectName.ToString(), conn, tx))
+                count = (long)cntcmd.ExecuteScalar();
             if (count > 0)
             {
                 NotifyPrimaryProgress(false, 15, "Validating table copy operation..", null);
@@ -325,8 +326,8 @@ namespace SQLiteTurbo
             // table. This is done so that a possible software/system crash will not cause the
             // data in the original table to be lost.
             string tmpname = Utils.GetTempName(updated.ObjectName.ToString());
-            SQLiteCommand create = new SQLiteCommand(updated.ToStatement(tmpname), conn, tx);
-            create.ExecuteNonQuery();
+            using (SQLiteCommand create = new SQLiteCommand(updated.ToStatement(tmpname), conn, tx))
+                create.ExecuteNonQuery();
 
             tx.Commit();
             tx = conn.BeginTransaction();
@@ -358,8 +359,8 @@ namespace SQLiteTurbo
                     PrepareInsertColumns(orig, updated, out inscols, out choppedInsCols, out prmnames);
 
                     long offset = 0;
-                    SQLiteCommand insert = PrepareInsertCommand(tmpname, updated, inscols, prmnames, conn, tx);
-                    SQLiteCommand select = new SQLiteCommand("SELECT * FROM " + orig.ObjectName.ToString(), conn, tx);
+                    using (SQLiteCommand insert = PrepareInsertCommand(tmpname, updated, inscols, prmnames, conn, tx))
+                    using (SQLiteCommand select = new SQLiteCommand("SELECT * FROM " + orig.ObjectName.ToString(), conn, tx))
                     using (SQLiteDataReader reader = select.ExecuteReader())
                     {
                         while (reader.Read())
@@ -406,10 +407,10 @@ namespace SQLiteTurbo
 
                 // Next step is to drop the original table and alter the name of the temporary table
                 // to have the same name as the original table.
-                SQLiteCommand drop = new SQLiteCommand("DROP TABLE " + orig.ObjectName.ToString(), conn, tx);
-                drop.ExecuteNonQuery();
-                SQLiteCommand rename = new SQLiteCommand("ALTER TABLE " + tmpname + " RENAME TO " + orig.ObjectName.ToString(), conn, tx);
-                rename.ExecuteNonQuery();
+                using (SQLiteCommand drop = new SQLiteCommand("DROP TABLE " + orig.ObjectName.ToString(), conn, tx))
+                    drop.ExecuteNonQuery();
+                using (SQLiteCommand rename = new SQLiteCommand("ALTER TABLE " + tmpname + " RENAME TO " + orig.ObjectName.ToString(), conn, tx))
+                    rename.ExecuteNonQuery();
 
                 CheckCancelled();
 
@@ -433,8 +434,8 @@ namespace SQLiteTurbo
 
                 // In case something wrong happened - we'll drop the temporary table before
                 // re-throwing the exception
-                SQLiteCommand droptemp = new SQLiteCommand("DROP TABLE " + tmpname, conn, tx);
-                droptemp.ExecuteNonQuery();
+                using (SQLiteCommand droptemp = new SQLiteCommand("DROP TABLE " + tmpname, conn, tx))
+                    droptemp.ExecuteNonQuery();
 
                 tx.Commit();
                 tx = conn.BeginTransaction();
@@ -551,8 +552,8 @@ namespace SQLiteTurbo
             {
                 if (SQLiteParser.Utils.Chop(stmt.OnTable.ToLower()) == SQLiteParser.Utils.Chop(name.ToString().ToLower()))
                 {
-                    SQLiteCommand create = new SQLiteCommand(stmt.ToString(), conn, tx);
-                    create.ExecuteNonQuery();
+                    using (SQLiteCommand create = new SQLiteCommand(stmt.ToString(), conn, tx))
+                        create.ExecuteNonQuery();
                 }
 
                 CheckCancelled();
@@ -688,10 +689,11 @@ namespace SQLiteTurbo
 
                 // Note: This is (potentially) a long operation because it may need to scan the entire table
                 //       in order to find even a single row with NULL values in the appropriate columns.
-                SQLiteCommand cnulls = new SQLiteCommand("SELECT COUNT(*) FROM " + 
+                long count = 0;
+                using (SQLiteCommand cnulls = new SQLiteCommand("SELECT COUNT(*) FROM " +
                     orig.ObjectName.ToString() +
-                    " WHERE " + sb.ToString(), conn, tx);
-                long count = (long)cnulls.ExecuteScalar();
+                    " WHERE " + sb.ToString(), conn, tx))
+                    count = (long)cnulls.ExecuteScalar();
                 if (count > 0)
                 {
                     // The original table contains rows where the column values is NULL. These rows will not
@@ -766,9 +768,9 @@ namespace SQLiteTurbo
         {
             for (int i = 0; i < added.Count; i++)
             {
-                SQLiteCommand alter = new SQLiteCommand("ALTER TABLE "+stmt.ObjectName.ToString()+
-                    " ADD COLUMN " + added[i].ToString(), conn, tx);
-                alter.ExecuteNonQuery();
+                using (SQLiteCommand alter = new SQLiteCommand("ALTER TABLE " + stmt.ObjectName.ToString() +
+                    " ADD COLUMN " + added[i].ToString(), conn, tx))
+                    alter.ExecuteNonQuery();
             } // for
         }
 
@@ -814,16 +816,16 @@ namespace SQLiteTurbo
                         " (may take some time)", null);
 
                     // First drop the trigger
-                    SQLiteCommand drop = new SQLiteCommand(
-                        @"DROP INDEX " + stmt.ObjectName.ToString(), conn, tx);
-                    drop.ExecuteNonQuery();
+                    using (SQLiteCommand drop = new SQLiteCommand(
+                        @"DROP INDEX " + stmt.ObjectName.ToString(), conn, tx))
+                        drop.ExecuteNonQuery();
 
                     NotifyPrimaryProgress(false, end, "Creating index " + stmt.ObjectName.ToString() +
                         " (may take some time)", null);
 
                     // Then re-create it from scratch
-                    SQLiteCommand create = new SQLiteCommand(stmt.ToString(), conn, tx);
-                    create.ExecuteNonQuery();
+                    using (SQLiteCommand create = new SQLiteCommand(stmt.ToString(), conn, tx))
+                        create.ExecuteNonQuery();
 
                     tx.Commit();
                 }
@@ -879,13 +881,13 @@ namespace SQLiteTurbo
                 try
                 {
                     // First drop the trigger
-                    SQLiteCommand drop = new SQLiteCommand(
-                        @"DROP TRIGGER " + stmt.ObjectName.ToString(), conn, tx);
-                    drop.ExecuteNonQuery();
+                    using (SQLiteCommand drop = new SQLiteCommand(
+                        @"DROP TRIGGER " + stmt.ObjectName.ToString(), conn, tx))
+                        drop.ExecuteNonQuery();
 
                     // Then re-create it from scratch
-                    SQLiteCommand create = new SQLiteCommand(stmt.ToString(), conn, tx);
-                    create.ExecuteNonQuery();
+                    using (SQLiteCommand create = new SQLiteCommand(stmt.ToString(), conn, tx))
+                        create.ExecuteNonQuery();
 
                     tx.Commit();
                 }
@@ -942,13 +944,13 @@ namespace SQLiteTurbo
                 try
                 {
                     // First drop the view
-                    SQLiteCommand drop = new SQLiteCommand(
-                        @"DROP VIEW " + stmt.ObjectName.ToString(), conn, tx);
-                    drop.ExecuteNonQuery();
+                    using (SQLiteCommand drop = new SQLiteCommand(
+                        @"DROP VIEW " + stmt.ObjectName.ToString(), conn, tx))
+                        drop.ExecuteNonQuery();
 
                     // Then re-create it from scratch
-                    SQLiteCommand create = new SQLiteCommand(stmt.ToString(), conn, tx);
-                    create.ExecuteNonQuery();
+                    using (SQLiteCommand create = new SQLiteCommand(stmt.ToString(), conn, tx))
+                        create.ExecuteNonQuery();
 
                     // When a view is dropped, so are all triggers that are attached to it,
                     // so we have to re-create them as well from scratch.
@@ -989,8 +991,8 @@ namespace SQLiteTurbo
             {
                 if (trigger.TableName.Equals(objName))
                 {
-                    SQLiteCommand create = new SQLiteCommand(trigger.ToString(), conn, tx);
-                    create.ExecuteNonQuery();
+                    using (SQLiteCommand create = new SQLiteCommand(trigger.ToString(), conn, tx))
+                        create.ExecuteNonQuery();
                 }
             } // foreach
         }
