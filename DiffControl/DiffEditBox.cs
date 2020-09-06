@@ -63,7 +63,7 @@ namespace DiffControl
 
             if (_lines.Count > lineIndex && _lines[lineIndex].Text == null)
             {
-                // In case this is a place holder line - set the column index to be 
+                // In case this is a placeholder line - set the column index to be 
                 // to the beginning of the line.
                 colIndex = 0;
             }
@@ -1631,11 +1631,12 @@ namespace DiffControl
         {
             if (_selection.IsEmpty)
             {
-                if (++col > _lines[line].Text.Length)
+                ++col;
+                while (_lines[line].Text == null || col > _lines[line].Text.Length)
                 {
                     col = 0;
                     if (++line >= _lines.Count)
-                        return;
+                        return; // Don't try to move beyond end
                 }
             }
             HandleBackPressed(line, col);
