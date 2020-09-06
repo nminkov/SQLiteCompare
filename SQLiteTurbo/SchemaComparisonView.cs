@@ -1074,6 +1074,12 @@ namespace SQLiteTurbo
             cell.Style.SelectionBackColor = ControlPaint.Dark(color, 0.25f);
         }
 
+        private void ClearCellColor(DataGridViewCell cell)
+        {
+            cell.Style.BackColor = Color.Empty;
+            cell.Style.SelectionBackColor = Color.Empty;
+        }
+
         private void FormatRow(DataGridViewRow row)
         {
             SchemaComparisonItem item = (SchemaComparisonItem)row.Tag;
@@ -1110,12 +1116,17 @@ namespace SQLiteTurbo
             }
             else if (item.Result == ComparisonResult.Same)
             {
-                if (item.LeftDdlStatement == null)
+                if (item.LeftDdlStatement == null) // Same for RightDdlStatement
                 {
                     row.Cells[2].Style.Font = _strikeout;
                     SetCellColor(row.Cells[2], NOT_EXIST_COLOR);
                     row.Cells[3].Style.Font = _strikeout;
                     SetCellColor(row.Cells[3], NOT_EXIST_COLOR);
+                }
+                else
+                {
+                    ClearCellColor(row.Cells[2]);
+                    ClearCellColor(row.Cells[3]);
                 }
             }
         }
