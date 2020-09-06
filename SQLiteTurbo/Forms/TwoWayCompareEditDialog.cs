@@ -26,6 +26,8 @@ namespace SQLiteTurbo
         public TwoWayCompareEditDialog()
         {
             InitializeComponent();
+            toolStrip1.Renderer = new ToolStripRenderer();
+            toolStrip2.Renderer = new ToolStripRenderer();
             _italic = new Font(this.Font, FontStyle.Italic);
         }
         #endregion

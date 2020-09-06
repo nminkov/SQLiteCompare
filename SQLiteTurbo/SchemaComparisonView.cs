@@ -40,21 +40,6 @@ namespace SQLiteTurbo
                     case Keys.Shift | Keys.Tab:
                         SelectNextControl(grdSchemaDiffs, false, true, true, true);
                         return true;
-                    case Keys.Alt | Keys.Up:
-                        MoveToPreviousDiff();
-                        return true;
-                    case Keys.Alt | Keys.Down:
-                        MoveToNextDiff();
-                        return true;
-                    case Keys.Alt | Keys.Left:
-                        CopyFromRightDB();
-                        return true;
-                    case Keys.Alt | Keys.Right:
-                        CopyFromLeftDB();
-                        return true;
-                    case Keys.Alt | Keys.Enter:
-                        OpenCompareDialog();
-                        return true;
                 }
             }
             return base.ProcessCmdKey(ref msg, keyData);

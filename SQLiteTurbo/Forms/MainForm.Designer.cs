@@ -332,6 +332,7 @@ namespace SQLiteTurbo
             this.btnCompare.Name = "btnCompare";
             this.btnCompare.Size = new System.Drawing.Size(93, 28);
             this.btnCompare.Text = "Compare...";
+            this.btnCompare.ToolTipText = "Compare... (Ctrl+O)";
             this.btnCompare.Click += new System.EventHandler(this.btnCompare_Click);
             // 
             // toolStripSeparator1
@@ -348,6 +349,7 @@ namespace SQLiteTurbo
             this.btnNextDiff.Name = "btnNextDiff";
             this.btnNextDiff.Size = new System.Drawing.Size(80, 28);
             this.btnNextDiff.Text = "Next diff";
+            this.btnNextDiff.ToolTipText = "Next diff (Alt+Down)";
             this.btnNextDiff.Click += new System.EventHandler(this.btnNextDiff_Click);
             this.btnNextDiff.EnabledChanged += new System.EventHandler(this.toolStripButton_EnabledChanged);
             // 
@@ -360,6 +362,7 @@ namespace SQLiteTurbo
             this.btnPreviousDiff.Name = "btnPreviousDiff";
             this.btnPreviousDiff.Size = new System.Drawing.Size(79, 28);
             this.btnPreviousDiff.Text = "Prev diff";
+            this.btnPreviousDiff.ToolTipText = "Prev diff (Alt+Up)";
             this.btnPreviousDiff.Click += new System.EventHandler(this.btnPreviousDiff_Click);
             this.btnPreviousDiff.EnabledChanged += new System.EventHandler(this.toolStripButton_EnabledChanged);
             // 
@@ -377,6 +380,7 @@ namespace SQLiteTurbo
             this.btnCopyFromLeftDB.Name = "btnCopyFromLeftDB";
             this.btnCopyFromLeftDB.Size = new System.Drawing.Size(130, 28);
             this.btnCopyFromLeftDB.Text = "Copy from left DB";
+            this.btnCopyFromLeftDB.ToolTipText = "Copy from left DB (Alt+Right)";
             this.btnCopyFromLeftDB.Click += new System.EventHandler(this.btnCopyFromLeftDB_Click);
             // 
             // btnCopyFromRightDB
@@ -388,6 +392,7 @@ namespace SQLiteTurbo
             this.btnCopyFromRightDB.Name = "btnCopyFromRightDB";
             this.btnCopyFromRightDB.Size = new System.Drawing.Size(138, 28);
             this.btnCopyFromRightDB.Text = "Copy from right DB";
+            this.btnCopyFromRightDB.ToolTipText = "Copy from right DB (Alt+Left)";
             this.btnCopyFromRightDB.Click += new System.EventHandler(this.btnCopyFromRightDB_Click);
             // 
             // toolStripSeparator3
@@ -404,6 +409,7 @@ namespace SQLiteTurbo
             this.btnEditSelectedDifference.Name = "btnEditSelectedDifference";
             this.btnEditSelectedDifference.Size = new System.Drawing.Size(137, 28);
             this.btnEditSelectedDifference.Text = "Edit selected item...";
+            this.btnEditSelectedDifference.ToolTipText = "Edit selected item... (Alt+Enter)";
             this.btnEditSelectedDifference.Click += new System.EventHandler(this.btnEditSelectedDifference_Click);
             this.btnEditSelectedDifference.EnabledChanged += new System.EventHandler(this.toolStripButton_EnabledChanged);
             // 

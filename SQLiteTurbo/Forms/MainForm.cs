@@ -77,6 +77,36 @@ namespace SQLiteTurbo
         public MainForm()
         {
             InitializeComponent();
+            toolStrip1.Renderer = new ToolStripRenderer();
+        }
+
+        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+        {
+            switch (keyData)
+            {
+                case Keys.Control | Keys.O:
+                    btnCompare.PerformClick();
+                    return true;
+                case Keys.Alt | Keys.Down:
+                    btnNextDiff.PerformClick();
+                    return true;
+                case Keys.Alt | Keys.Up:
+                    btnPreviousDiff.PerformClick();
+                    return true;
+                case Keys.Alt | Keys.Right:
+                    btnCopyFromLeftDB.PerformClick();
+                    return true;
+                case Keys.Alt | Keys.Left:
+                    btnCopyFromRightDB.PerformClick();
+                    return true;
+                case Keys.Alt | Keys.Enter:
+                    btnEditSelectedDifference.PerformClick();
+                    return true;
+                case Keys.Control | Keys.E:
+                    btnExportDataDifferences.PerformClick();
+                    return true;
+            }
+            return base.ProcessCmdKey(ref msg, keyData);
         }
 
         #region Event Handlers
@@ -343,7 +373,7 @@ namespace SQLiteTurbo
 
         #endregion
 
-        #region Private Variables       
+        #region Private Variables
         private SchemaComparisonView _schemaView = null;
         private CompareParams _compareParams = null;
         private string _leftdb;

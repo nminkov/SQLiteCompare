@@ -5,12 +5,24 @@ using System.Collections.Generic;
 using System.Windows.Forms;
 using log4net;
 using log4net.Config;
+using System.Drawing;
 
 // Configure log4net using the .config file
 [assembly: log4net.Config.XmlConfigurator(Watch = true)]
 
 namespace SQLiteTurbo
 {
+    class ToolStripRenderer : ToolStripProfessionalRenderer
+    {
+        protected override void OnRenderButtonBackground(ToolStripItemRenderEventArgs e)
+        {
+            // Suppress pressedness visualization while doing PerformClick()
+            if (e.Item.Pressed && !e.Item.Selected)
+                return;
+            base.OnRenderButtonBackground(e);
+        }
+    }
+
     static class Program
     {
         static Program()
