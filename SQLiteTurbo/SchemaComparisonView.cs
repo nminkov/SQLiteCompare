@@ -27,7 +27,39 @@ namespace SQLiteTurbo
             _strikeout = new Font(this.Font, FontStyle.Strikeout);
         }
         #endregion
-
+        #region ProcessCmdKey
+        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+        {
+            if (grdSchemaDiffs.Focused)
+            {
+                switch (keyData)
+                {
+                    case Keys.Tab:
+                        SelectNextControl(grdSchemaDiffs, true, true, true, true);
+                        return true;
+                    case Keys.Shift | Keys.Tab:
+                        SelectNextControl(grdSchemaDiffs, false, true, true, true);
+                        return true;
+                    case Keys.Alt | Keys.Up:
+                        MoveToPreviousDiff();
+                        return true;
+                    case Keys.Alt | Keys.Down:
+                        MoveToNextDiff();
+                        return true;
+                    case Keys.Alt | Keys.Left:
+                        CopyFromRightDB();
+                        return true;
+                    case Keys.Alt | Keys.Right:
+                        CopyFromLeftDB();
+                        return true;
+                    case Keys.Alt | Keys.Enter:
+                        OpenCompareDialog();
+                        return true;
+                }
+            }
+            return base.ProcessCmdKey(ref msg, keyData);
+        }
+        #endregion
         #region Public Methods
         /// <summary>
         /// Used to set the comparison results into the view
