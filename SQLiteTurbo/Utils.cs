@@ -1302,16 +1302,16 @@ namespace SQLiteTurbo
             return false;
         }
 
-		public static bool ConvertStringToBoolean(string boolValue)
-		{
-			var trueStrings = new List<String> { "1", "y", "yes", "true", "on", "j", "ja", "wahr" };
-			var falseStrings = new List<String> { "", "0", "n", "no", "false", "off", "n", "nein", "falsch" };
+        public static bool ConvertStringToBoolean(string boolValue)
+        {
+            var trueStrings = new List<String> { "1", "y", "yes", "true", "on", "j", "ja", "wahr" };
+            var falseStrings = new List<String> { "", "0", "n", "no", "false", "off", "n", "nein", "falsch" };
 
-			if (trueStrings.Any(s => s.Equals(boolValue, StringComparison.OrdinalIgnoreCase))) { return true; }
-			if (falseStrings.Any(s => s.Equals(boolValue, StringComparison.OrdinalIgnoreCase))) { return false; }
+            if (trueStrings.Any(s => s.Equals(boolValue, StringComparison.OrdinalIgnoreCase))) { return true; }
+            if (falseStrings.Any(s => s.Equals(boolValue, StringComparison.OrdinalIgnoreCase))) { return false; }
 
-			throw new FormatException($"Converting '{boolValue}' to Boolean failed!");
-		}
+            throw new FormatException($"Converting '{boolValue}' to Boolean failed!");
+        }
 
         #region Private Methods
         private static void PrepareConverters()
@@ -1614,11 +1614,8 @@ namespace SQLiteTurbo
     public enum MemFormat
     {
         None = 0,
-
         KB = 1,
-
         MB = 2,
-
         GB = 3,
     }
 }

@@ -441,10 +441,6 @@ namespace SQLiteTurbo
             {
                 // Compare again based on the updated schema objects found in the item object.
                 CompareSchema(_item);
-
-                // Notify about the change
-                if (SchemaChanged != null)
-                    SchemaChanged(this, EventArgs.Empty);
             } // else
             else
             {
@@ -477,6 +473,9 @@ namespace SQLiteTurbo
                 _tableChanges = null;
             }
             _item.TableChanges = _tableChanges;
+            // Notify about the change
+            if (SchemaChanged != null)
+                SchemaChanged(this, EventArgs.Empty);
         }
 
         private void CompareSchema(SchemaComparisonItem item)
