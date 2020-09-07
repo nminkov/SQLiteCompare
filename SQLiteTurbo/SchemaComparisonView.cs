@@ -27,24 +27,6 @@ namespace SQLiteTurbo
             _strikeout = new Font(this.Font, FontStyle.Strikeout);
         }
         #endregion
-        #region ProcessCmdKey
-        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
-        {
-            if (grdSchemaDiffs.Focused)
-            {
-                switch (keyData)
-                {
-                    case Keys.Tab:
-                        SelectNextControl(grdSchemaDiffs, true, true, true, true);
-                        return true;
-                    case Keys.Shift | Keys.Tab:
-                        SelectNextControl(grdSchemaDiffs, false, true, true, true);
-                        return true;
-                }
-            }
-            return base.ProcessCmdKey(ref msg, keyData);
-        }
-        #endregion
         #region Public Methods
         /// <summary>
         /// Used to set the comparison results into the view

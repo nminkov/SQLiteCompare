@@ -78,6 +78,7 @@ namespace SQLiteTurbo
             this.grdSchemaDiffs.RowHeadersVisible = false;
             this.grdSchemaDiffs.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.grdSchemaDiffs.Size = new System.Drawing.Size(856, 503);
+            this.grdSchemaDiffs.StandardTab = true;
             this.grdSchemaDiffs.TabIndex = 0;
             this.grdSchemaDiffs.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.grdSchemaDiffs_CellDoubleClick);
             this.grdSchemaDiffs.CellPainting += new System.Windows.Forms.DataGridViewCellPaintingEventHandler(this.grdSchemaDiffs_CellPainting);
