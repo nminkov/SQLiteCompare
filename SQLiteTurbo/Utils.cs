@@ -34,27 +34,15 @@ namespace SQLiteTurbo
         /// SQLite file</returns>
         public static float GetSQLiteVersion(string fpath)
         {
-            int index = 0;
-            byte[] buffer = new byte[1024];
+            string vstr = string.Empty;
             using (FileStream fs = File.Open(fpath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
-            {                
-                int res = fs.ReadByte();
-                while (res != -1 && res != 0 && index<buffer.Length)
-                {
-                    buffer[index] = (byte)res;
-                    res = fs.ReadByte();
-                    index++;
-                } // while
-
-                fs.Close();
-            } // using
-
-            // A valid SQLite file will have a much lower index value
-            if (index == buffer.Length)
-                return -1F;
-            
-            // Convert the bytes array that was read to an ASCII string
-            string vstr = Encoding.ASCII.GetString(buffer, 0, index);
+            {
+                var buffer = new byte[1024];
+                var index = fs.Read(buffer, 0, buffer.Length);
+                index = Array.IndexOf(buffer, (byte)0, 0, index);
+                if (index >= 0)
+                    vstr = Encoding.ASCII.GetString(buffer, 0, index);
+            }
 
             // Check for version 3 and above file format
             Regex rx3 = new Regex(@"SQLite format (\d+(\.\d+)?)");

@@ -67,7 +67,7 @@
 ;--------------------------------
 ;Pages
 
-  !insertmacro MUI_PAGE_LICENSE "..\eula.txt"
+  !insertmacro MUI_PAGE_LICENSE "..\LICENSE"
   !insertmacro MUI_PAGE_DIRECTORY
   !insertmacro MUI_PAGE_INSTFILES
 
