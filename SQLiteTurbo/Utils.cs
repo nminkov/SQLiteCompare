@@ -196,51 +196,6 @@ namespace SQLiteTurbo
         }
 
         /// <summary>
-        /// Returns the path to the license file
-        /// </summary>
-        /// <returns></returns>
-        public static string GetLicenseFilePath()
-        {
-            string fpath = GetInstallationDirectory() + "\\license.lic";
-            return fpath;
-        }
-
-        /// <summary>
-        /// Get the instalation directory path
-        /// </summary>
-        public static string GetInstallationDirectory()
-        {
-            Process proc = Process.GetCurrentProcess();
-            string bp = proc.Modules[0].FileName;
-            bp = Path.GetDirectoryName(bp);
-            return bp;
-        }
-
-        /// <summary>
-        /// Get the version number of the software
-        /// </summary>
-        /// <returns></returns>
-        public static string GetSoftwareVersion()
-        {
-            Assembly assembly = Assembly.GetExecutingAssembly();
-            string ver = "" + assembly.GetName().Version.Major + "." +
-                assembly.GetName().Version.Minor + " p" +
-                assembly.GetName().Version.Revision;
-            return ver;
-        }
-
-        /// <summary>
-        /// Get the software build number
-        /// </summary>
-        /// <returns></returns>
-        public static string GetSoftwareBuild()
-        {
-            Assembly assembly = Assembly.GetExecutingAssembly();
-            string ver = "datadiode " + assembly.GetName().Version.Build;
-            return ver;
-        }
-
-        /// <summary>
         /// Used to create a SELECT list of columns whose values are either NULL (if the column
         /// is NULLABLE and has no NON-NULL-DEFAULT value) or a DEFAULT non-null value. This
         /// list is can be used to construct INSERT statements.

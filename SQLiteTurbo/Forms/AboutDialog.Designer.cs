@@ -33,10 +33,8 @@ namespace SQLiteTurbo
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.richTextBox1 = new System.Windows.Forms.RichTextBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.lblBuild = new System.Windows.Forms.Label();
             this.lblVersion = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
-            this.label3 = new System.Windows.Forms.Label();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.btnClose = new System.Windows.Forms.Button();
             this.panel1.SuspendLayout();
@@ -79,25 +77,14 @@ namespace SQLiteTurbo
             // 
             // groupBox1
             // 
-            this.groupBox1.Controls.Add(this.lblBuild);
             this.groupBox1.Controls.Add(this.lblVersion);
             this.groupBox1.Controls.Add(this.label1);
-            this.groupBox1.Controls.Add(this.label3);
             this.groupBox1.Location = new System.Drawing.Point(12, 118);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(506, 69);
             this.groupBox1.TabIndex = 2;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Version Information";
-            // 
-            // lblBuild
-            // 
-            this.lblBuild.AutoSize = true;
-            this.lblBuild.Location = new System.Drawing.Point(241, 28);
-            this.lblBuild.Name = "lblBuild";
-            this.lblBuild.Size = new System.Drawing.Size(31, 13);
-            this.lblBuild.TabIndex = 3;
-            this.lblBuild.Text = "4055";
             // 
             // lblVersion
             // 
@@ -117,16 +104,6 @@ namespace SQLiteTurbo
             this.label1.Size = new System.Drawing.Size(106, 13);
             this.label1.TabIndex = 0;
             this.label1.Text = "Software version:";
-            // 
-            // label3
-            // 
-            this.label3.AutoSize = true;
-            this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(177)));
-            this.label3.Location = new System.Drawing.Point(188, 28);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(47, 13);
-            this.label3.TabIndex = 2;
-            this.label3.Text = "Build #";
             // 
             // pictureBox1
             // 
@@ -184,8 +161,6 @@ namespace SQLiteTurbo
         private System.Windows.Forms.PictureBox pictureBox1;
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.RichTextBox richTextBox1;
-        private System.Windows.Forms.Label lblBuild;
-        private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label lblVersion;
         private System.Windows.Forms.Label label1;
 

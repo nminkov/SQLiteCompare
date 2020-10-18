@@ -33,8 +33,7 @@ namespace SQLiteTurbo
 
         private void AboutDialog_Load(object sender, EventArgs e)
         {
-            lblVersion.Text = Utils.GetSoftwareVersion();
-            lblBuild.Text = Utils.GetSoftwareBuild();
+            lblVersion.Text = ProductVersion;
         }
     }
 }
