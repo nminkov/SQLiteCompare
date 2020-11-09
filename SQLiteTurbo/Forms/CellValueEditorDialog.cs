@@ -394,7 +394,7 @@ namespace SQLiteTurbo
                     numInteger.Value = (ulong)value;
                 else if (value is string)
                     if (value.ToString() != "")
-                        numInteger.Value = Convert.ToInt32(value);
+                        numInteger.Value = Convert.ToInt64(value);
                     else
                         numInteger.Value = 0;
                 else
