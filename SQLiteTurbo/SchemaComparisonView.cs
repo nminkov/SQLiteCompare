@@ -1061,7 +1061,8 @@ namespace SQLiteTurbo
                     {
                         e.Graphics.FillRectangle(brush, e.CellBounds);
                     }
-                    e.PaintContent(e.CellBounds);
+                    e.Paint(e.CellBounds, DataGridViewPaintParts.ContentForeground |
+                        DataGridViewPaintParts.ContentBackground | DataGridViewPaintParts.Border);
                     e.Handled = true;
                 }
             }
