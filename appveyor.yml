@@ -1,0 +1,25 @@
+version: 1.0.{build}
+image: Visual Studio 2017
+
+configuration:
+- Debug
+- Release
+
+platform: Any CPU
+
+environment:
+  EnableNuGetPackageRestore: true
+
+before_build:
+- nuget restore
+
+build:
+  verbosity: normal
+  project: SQLiteTurboDiff.sln
+
+after_build:
+- ps: $env:PRODUCT_VERSION=(Get-Command "$env:APPVEYOR_BUILD_FOLDER\SQLiteTurbo\bin\$env:CONFIGURATION\SQLiteCompare.exe").FileVersionInfo.ProductVersion
+
+artifacts:
+- path: SQLiteTurbo\bin\$(configuration)
+  name: $(APPVEYOR_PROJECT_NAME)_$(PRODUCT_VERSION)-$(configuration)
