@@ -6,7 +6,6 @@ using System.Data;
 using System.Data.SQLite;
 using log4net;
 using SQLiteParser;
-using Common;
 
 namespace SQLiteTurbo
 {

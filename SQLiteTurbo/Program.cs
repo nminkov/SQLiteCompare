@@ -23,6 +23,10 @@ namespace SQLiteTurbo
         }
     }
 
+    class UserCancellationException : Exception
+    {
+    }
+
     static class Program
     {
         static Program()

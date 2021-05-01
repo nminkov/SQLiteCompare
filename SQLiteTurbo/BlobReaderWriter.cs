@@ -3,7 +3,6 @@ using System.IO;
 using System.Text;
 using System.Runtime.InteropServices;
 using System.Data.SQLite;
-using Common;
 
 namespace SQLiteTurbo
 {

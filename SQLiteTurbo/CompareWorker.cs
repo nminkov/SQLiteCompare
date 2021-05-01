@@ -7,7 +7,6 @@ using System.ComponentModel;
 using System.Data.SQLite;
 using SQLiteParser;
 using log4net;
-using Common;
 
 namespace SQLiteTurbo
 {

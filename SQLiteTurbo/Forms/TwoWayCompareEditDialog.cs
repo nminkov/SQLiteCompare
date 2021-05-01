@@ -8,7 +8,6 @@ using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using SQLiteParser;
 using log4net;
-using Common;
 
 namespace SQLiteTurbo
 {

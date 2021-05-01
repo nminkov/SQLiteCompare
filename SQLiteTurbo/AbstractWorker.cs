@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading;
 using log4net;
-using Common;
 
 namespace SQLiteTurbo
 {

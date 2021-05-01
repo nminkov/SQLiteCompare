@@ -310,10 +310,6 @@
     <Compile Include="WebSiteUtils.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Common\Common.csproj">
-      <Project>{6CEE8102-55B6-42B8-AD74-2246AEB2D942}</Project>
-      <Name>Common</Name>
-    </ProjectReference>
     <ProjectReference Include="..\DiffControl\DiffControl.csproj">
       <Project>{310E7EA3-7370-4A28-9EA6-450B35E84C7C}</Project>
       <Name>DiffControl</Name>
