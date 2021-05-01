@@ -155,8 +155,6 @@
     <Compile Include="IWorker.cs" />
     <Compile Include="ItemCopier.cs" />
     <Compile Include="LocalUserFileAppender.cs" />
-    <Compile Include="MailSender.cs" />
-    <Compile Include="PostSubmitter.cs" />
     <Compile Include="Forms\ProgressDialog.cs">
       <SubType>Form</SubType>
     </Compile>
