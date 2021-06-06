@@ -18,8 +18,8 @@ build:
   project: SQLiteTurboDiff.sln
 
 after_build:
-- ps: $env:PRODUCT_VERSION=(Get-Command "$env:APPVEYOR_BUILD_FOLDER\SQLiteTurbo\bin\$env:CONFIGURATION\SQLiteCompare.exe").FileVersionInfo.ProductVersion
+- ps: $env:PRODUCT_VERSION=(Get-Command "$env:APPVEYOR_BUILD_FOLDER\SQLiteTurbo\bin\$env:CONFIGURATION\net40\SQLiteCompare.exe").FileVersionInfo.ProductVersion
 
 artifacts:
-- path: SQLiteTurbo\bin\$(configuration)
+- path: SQLiteTurbo\bin\$(configuration)\net40
   name: $(APPVEYOR_PROJECT_NAME)_$(PRODUCT_VERSION)-$(configuration)
