@@ -70,7 +70,7 @@
     <None Include="TestSchemaFiles\schema_1.sql" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="System.Data.SQLite" Version="1.0.113.0" />
+    <PackageReference Include="System.Data.SQLite.Core" Version="1.0.113.0" />
   </ItemGroup>
   <Import Project="$(SolutionDir)$(SolutionName).targets" />
 </Project>

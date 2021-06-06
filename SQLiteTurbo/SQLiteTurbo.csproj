@@ -330,7 +330,7 @@
     <PackageReference Include="Be.Windows.Forms.HexBox" Version="1.6.1.0" />
     <PackageReference Include="log4net" Version="2.0.8.0" />
     <PackageReference Include="MultiPanelControl" Version="1.1.6.0" />
-    <PackageReference Include="System.Data.SQLite" Version="1.0.113.0" />
+    <PackageReference Include="System.Data.SQLite.Core" Version="1.0.113.0" />
   </ItemGroup>
   <PropertyGroup>
     <PostBuildEvent>copy /y $(SolutionDir)LICENSE</PostBuildEvent>
