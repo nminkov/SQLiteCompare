@@ -139,7 +139,7 @@
   </ItemGroup>
   <Import Project="$(SolutionDir)$(SolutionName).targets" />
   <PropertyGroup>
-    <PreBuildEvent>"$(SolutionDir)gplex.exe" /verbose /out:"$(ProjectDir)SQLiteLexer.cs" "$(ProjectDir)sqlite.lex"
-"$(SolutionDir)gppg.exe" /verbose /gplex /no-lines /conflicts "$(ProjectDir)sqlite.y" &gt; "$(ProjectDir)SQLiteParser.cs"</PreBuildEvent>
+    <PreBuildEvent>"$(SolutionDir)gplex.exe" /verbose /out:"$(MSBuildProjectDirectory)\SQLiteLexer.cs" "$(MSBuildProjectDirectory)\sqlite.lex"
+"$(SolutionDir)gppg.exe" /verbose /gplex /no-lines /conflicts "$(MSBuildProjectDirectory)\sqlite.y" &gt; "$(MSBuildProjectDirectory)\SQLiteParser.cs"</PreBuildEvent>
   </PropertyGroup>
 </Project>
