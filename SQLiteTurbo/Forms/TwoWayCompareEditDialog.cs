@@ -8,7 +8,6 @@ using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using SQLiteParser;
 using log4net;
-using Common;
 
 namespace SQLiteTurbo
 {
@@ -26,10 +25,80 @@ namespace SQLiteTurbo
         public TwoWayCompareEditDialog()
         {
             InitializeComponent();
+            toolStrip1.Renderer = new ToolStripRenderer();
+            toolStrip2.Renderer = new ToolStripRenderer();
             _italic = new Font(this.Font, FontStyle.Italic);
         }
         #endregion
-
+        #region ProcessCmdKey
+        private bool ProcessCmdKeySchemaPage(Keys keyData)
+        {
+            switch (keyData)
+            {
+                case Keys.Control | Keys.S:
+                    btnUpdateSchema.PerformClick();
+                    return true;
+                case Keys.Control | Keys.D:
+                    btnCompareData.PerformClick();
+                    return true;
+                case Keys.Control | Keys.Z:
+                    btnUndo.PerformClick();
+                    return true;
+                case Keys.Control | Keys.Y:
+                    btnRedo.PerformClick();
+                    return true;
+                case Keys.Control | Keys.R:
+                    btnClearAllChanges.PerformClick();
+                    return true;
+                case Keys.Control | Keys.O:
+                    btnReorderColumns.PerformClick();
+                    return true;
+            }
+            return false;
+        }
+        private bool ProcessCmdKeyDataPage(Keys keyData)
+        {
+            switch (keyData)
+            {
+                case Keys.F5:
+                    btnRefreshComparison.PerformClick();
+                    return true;
+                case Keys.Control | Keys.L:
+                    btnExistsInLeft.PerformClick();
+                    return true;
+                case Keys.Control | Keys.R:
+                    btnExistsInRight.PerformClick();
+                    return true;
+                case Keys.Control | Keys.D:
+                    btnDifferent.PerformClick();
+                    return true;
+                case Keys.Control | Keys.S:
+                    btnSame.PerformClick();
+                    return true;
+                case Keys.Control | Keys.F:
+                    btnSearchData.PerformClick();
+                    return true;
+                case Keys.Control | Keys.E:
+                    btnExportDifferences.PerformClick();
+                    return true;
+            }
+            return false;
+        }
+        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+        {
+            switch (keyData)
+            {
+                case Keys.Escape:
+                    this.Close();
+                    return true;
+            }
+            if (tbpSchema.Visible && ProcessCmdKeySchemaPage(keyData))
+                return true;
+            if (tbpData.Visible && ProcessCmdKeyDataPage(keyData))
+                return true;
+            return base.ProcessCmdKey(ref msg, keyData);
+        }
+        #endregion
         #region Public Methods
         /// <summary>
         /// Prepare the dialog with the comparison item
@@ -87,7 +156,6 @@ namespace SQLiteTurbo
             UpdateState();
         }
 
-
         private void TwoWayCompareEditDialog_Shown(object sender, EventArgs e)
         {
             ucDiff.Focus();
@@ -140,6 +208,7 @@ namespace SQLiteTurbo
                     _item.ErrorMessage = dlg.Error.Message;
                 return;
             }
+            _tableChanges?.Dispose();
             _tableChanges = (TableChanges)dlg.Result;
             if (!tbcViews.TabPages.Contains(tbpData))
                 tbcViews.TabPages.Add(tbpData);
@@ -157,21 +226,21 @@ namespace SQLiteTurbo
             tbcViews.SelectedTab = tbpData;
         }
 
-		private void btnLeftOrRight_Click(object sender, EventArgs e)
-		{
-			if (_nested)
-				return;
+        private void btnLeftOrRight_Click(object sender, EventArgs e)
+        {
+            if (_nested)
+                return;
 
-			_nested = true;
-			btnLeftOrRight.Checked = true;
-			btnExistsInLeft.Checked = btnExistsInRight.Checked = btnDifferent.Checked = btnSame.Checked = false;
-			_nested = false;
+            _nested = true;
+            btnLeftOrRight.Checked = true;
+            btnExistsInLeft.Checked = btnExistsInRight.Checked = btnDifferent.Checked = btnSame.Checked = false;
+            _nested = false;
 
-			// Request the table diff control to show only rows that exist in the right database table
-			UpdateDataTab();
-		}
+            // Request the table diff control to show only rows that exist in the right database table
+            UpdateDataTab();
+        }
 
-		private void btnExistsInLeft_Click(object sender, EventArgs e)
+        private void btnExistsInLeft_Click(object sender, EventArgs e)
         {
             if (_nested)
                 return;
@@ -304,18 +373,6 @@ namespace SQLiteTurbo
             UpdateState();
         }
 
-        private void ucDiff_LeftSaveRequested(object sender, EventArgs e)
-        {
-            if (btnUpdateSchema.Enabled)
-                btnUpdateSchema_Click(btnUpdateSchema, EventArgs.Empty);
-        }
-
-        private void ucDiff_RightSaveRequested(object sender, EventArgs e)
-        {
-            if (btnUpdateSchema.Enabled)
-                btnUpdateSchema_Click(btnUpdateSchema, EventArgs.Empty);
-        }
-
         private void TwoWayCompareEditDialog_Load(object sender, EventArgs e)
         {
 
@@ -352,7 +409,7 @@ namespace SQLiteTurbo
             long rightCount = _tableChanges.GetTotalChangesCount(new string[] { TableChanges.EXISTS_IN_RIGHT_TABLE_NAME });
             long diffCount = _tableChanges.GetTotalChangesCount(new string[] { TableChanges.DIFFERENT_ROWS_TABLE_NAME });
             long sameCount = _tableChanges.GetTotalChangesCount(new string[] { TableChanges.SAME_ROWS_TABLE_NAME });
-			long bothCount = _tableChanges.GetTotalChangesCount(new string[] { TableChanges.DIFFERENT_ROWS_TABLE_NAME, TableChanges.SAME_ROWS_TABLE_NAME });
+            long bothCount = _tableChanges.GetTotalChangesCount(new string[] { TableChanges.DIFFERENT_ROWS_TABLE_NAME, TableChanges.SAME_ROWS_TABLE_NAME });
 
             string qm = string.Empty;
             if (!precise)
@@ -370,8 +427,8 @@ namespace SQLiteTurbo
             btnExistsInRight.Text = $"({rightCount}{qm})";
             btnDifferent.Text = $"({diffCount}{qm})";
             btnSame.Text = $"({sameCount}{qm})";
-			btnLeftOrRight.Text = $"({bothCount}{qm})";
-		}
+            btnLeftOrRight.Text = $"({bothCount}{qm})";
+        }
 
         private void StartTableUpdate(string leftSQL, string rightSQL, bool skipNullRows)
         {
@@ -385,10 +442,6 @@ namespace SQLiteTurbo
             {
                 // Compare again based on the updated schema objects found in the item object.
                 CompareSchema(_item);
-
-                // Notify about the change
-                if (SchemaChanged != null)
-                    SchemaChanged(this, EventArgs.Empty);
             } // else
             else
             {
@@ -414,6 +467,16 @@ namespace SQLiteTurbo
 
             // Remove the data tab
             tbcViews.TabPages.Remove(tbpData);
+            // Invalidate the table changes
+            if (_tableChanges != null)
+            {
+                _tableChanges.Dispose();
+                _tableChanges = null;
+            }
+            _item.TableChanges = _tableChanges;
+            // Notify about the change
+            if (SchemaChanged != null)
+                SchemaChanged(this, EventArgs.Empty);
         }
 
         private void CompareSchema(SchemaComparisonItem item)
@@ -452,10 +515,10 @@ namespace SQLiteTurbo
                 return TableChanges.EXISTS_IN_LEFT_TABLE_NAME;
             if (btnExistsInRight.Checked)
                 return TableChanges.EXISTS_IN_RIGHT_TABLE_NAME;
-			if (btnLeftOrRight.Checked)
-				return TableChanges.EXISTS_IN_LEFT_OR_RIGHT_TABLE_NAME;
+            if (btnLeftOrRight.Checked)
+                return TableChanges.EXISTS_IN_LEFT_OR_RIGHT_TABLE_NAME;
 
-			throw new InvalidOperationException();
+            throw new InvalidOperationException();
         }
 
         private string FormatTitle(SchemaComparisonItem item)
@@ -491,7 +554,7 @@ namespace SQLiteTurbo
         private Font _italic;
         private Regex _nlrx = new Regex("\r\n|\n");
         private ILog _log = LogManager.GetLogger(typeof(TwoWayCompareEditDialog));
-		#endregion
+        #endregion
 
-	}
+    }
 }

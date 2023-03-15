@@ -39,11 +39,12 @@ namespace SQLiteTurbo
             // btnClose
             // 
             this.btnClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnClose.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.btnClose.Location = new System.Drawing.Point(682, 478);
             this.btnClose.Name = "btnClose";
             this.btnClose.Size = new System.Drawing.Size(99, 23);
             this.btnClose.TabIndex = 3;
-            this.btnClose.Text = "Close";
+            this.btnClose.Text = "&Close";
             this.btnClose.UseVisualStyleBackColor = true;
             this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
             // 
@@ -54,7 +55,7 @@ namespace SQLiteTurbo
             this.btnSaveAs.Name = "btnSaveAs";
             this.btnSaveAs.Size = new System.Drawing.Size(99, 23);
             this.btnSaveAs.TabIndex = 4;
-            this.btnSaveAs.Text = "Save as...";
+            this.btnSaveAs.Text = "&Save as...";
             this.btnSaveAs.UseVisualStyleBackColor = true;
             this.btnSaveAs.Click += new System.EventHandler(this.btnSaveAs_Click);
             // 
@@ -108,6 +109,7 @@ namespace SQLiteTurbo
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.CancelButton = this.btnClose;
             this.ClientSize = new System.Drawing.Size(793, 509);
             this.Controls.Add(this.txtSQL);
             this.Controls.Add(this.btnSaveAs);

@@ -5,7 +5,6 @@ using System.Data;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
-using Common;
 
 namespace SQLiteTurbo
 {
@@ -33,8 +32,7 @@ namespace SQLiteTurbo
 
         private void AboutDialog_Load(object sender, EventArgs e)
         {
-            lblVersion.Text = Utils.GetSoftwareVersion();
-            lblBuild.Text = Utils.GetSoftwareBuild();
+            lblVersion.Text = ProductVersion;
         }
     }
 }

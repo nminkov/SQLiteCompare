@@ -1,31 +1,23 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="14.0">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>8.0.50727</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{16ADD088-AE2A-4D2D-B66C-00ED4D94EC3D}</ProjectGuid>
+    <Version>3.1.0@(VersionSuffix)</Version>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>SQLiteTurbo</RootNamespace>
     <AssemblyName>SQLiteCompare</AssemblyName>
+    <AssemblyTitle>SQLiteCompare ($(Configuration))</AssemblyTitle>
     <ApplicationIcon>Resources\app.ico</ApplicationIcon>
-    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
-    <FileUpgradeFlags>
-    </FileUpgradeFlags>
-    <UpgradeBackupLocation>
-    </UpgradeBackupLocation>
-    <OldToolsVersion>2.0</OldToolsVersion>
-    <TargetFrameworkProfile />
-    <NuGetPackageImportStamp>
-    </NuGetPackageImportStamp>
+    <TargetFramework>net40</TargetFramework>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+    <EnableDefaultEmbeddedResourceItems>false</EnableDefaultEmbeddedResourceItems>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
+    <AllowedReferenceRelatedFileExtensions>*.pdb</AllowedReferenceRelatedFileExtensions>
     <DefineConstants>TRACE;DEBUG;DEMO_VERSION</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -35,6 +27,7 @@
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
+    <AllowedReferenceRelatedFileExtensions>*.pdb</AllowedReferenceRelatedFileExtensions>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -43,6 +36,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <DebugSymbols>true</DebugSymbols>
     <OutputPath>bin\x86\Debug\</OutputPath>
+    <AllowedReferenceRelatedFileExtensions>*.pdb</AllowedReferenceRelatedFileExtensions>
     <DefineConstants>TRACE;DEBUG;DEMO_VERSION</DefineConstants>
     <DebugType>full</DebugType>
     <PlatformTarget>x86</PlatformTarget>
@@ -51,6 +45,7 @@
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <OutputPath>bin\x86\Release\</OutputPath>
+    <AllowedReferenceRelatedFileExtensions>*.pdb</AllowedReferenceRelatedFileExtensions>
     <DefineConstants>TRACE</DefineConstants>
     <Optimize>true</Optimize>
     <DebugType>pdbonly</DebugType>
@@ -59,30 +54,6 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Alsing.SyntaxBox, Version=1.4.10.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Alsing.SyntaxBox.1.4.10.1\lib\net45\Alsing.SyntaxBox.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Be.Windows.Forms.HexBox, Version=1.6.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Be.Windows.Forms.HexBox.1.6.1\lib\net40\Be.Windows.Forms.HexBox.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
-      <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
-      <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.SqlServer.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="log4net, Version=1.2.15.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
-      <HintPath>..\packages\log4net.2.0.5\lib\net45-full\log4net.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="MultiPanelControl, Version=1.1.4.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\MultiPanelControl.1.1.4.0\lib\net40\MultiPanelControl.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="ShiftReduceParser, Version=0.0.0.0, Culture=neutral, PublicKeyToken=ff8fabef79b9cbb4, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\ShiftReduceParser.dll</HintPath>
@@ -90,18 +61,6 @@
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Data" />
-    <Reference Include="System.Data.SQLite, Version=1.0.104.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Data.SQLite.Core.1.0.104.0\lib\net46\System.Data.SQLite.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="System.Data.SQLite.EF6, Version=1.0.104.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Data.SQLite.EF6.1.0.104.0\lib\net46\System.Data.SQLite.EF6.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="System.Data.SQLite.Linq, Version=1.0.104.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Data.SQLite.Linq.1.0.104.0\lib\net46\System.Data.SQLite.Linq.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="System.Deployment" />
     <Reference Include="System.Design" />
     <Reference Include="System.Drawing" />
@@ -109,6 +68,8 @@
     <Reference Include="System.Web" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
+    <Reference Include="UIAutomationProvider" />
+    <Reference Include="UIAutomationTypes" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\SolutionInfo.cs">
@@ -133,12 +94,6 @@
       <DependentUpon>CellValueEditorDialog.cs</DependentUpon>
     </Compile>
     <Compile Include="ChangeScriptBuilder.cs" />
-    <Compile Include="Forms\CheckUpdatesDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\CheckUpdatesDialog.Designer.cs">
-      <DependentUpon>CheckUpdatesDialog.cs</DependentUpon>
-    </Compile>
     <Compile Include="Forms\CompareDialog.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -165,24 +120,6 @@
     <Compile Include="Forms\ExportChangesDialog.Designer.cs">
       <DependentUpon>ExportChangesDialog.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\FeedbackDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\FeedbackDialog.Designer.cs">
-      <DependentUpon>FeedbackDialog.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\FirstTimeDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\FirstTimeDialog.Designer.cs">
-      <DependentUpon>FirstTimeDialog.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\HttpPostSenderDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\HttpPostSenderDialog.Designer.cs">
-      <DependentUpon>HttpPostSenderDialog.cs</DependentUpon>
-    </Compile>
     <Compile Include="Forms\IndefiniteProgressDialog.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -191,16 +128,7 @@
     </Compile>
     <Compile Include="IWorker.cs" />
     <Compile Include="ItemCopier.cs" />
-    <Compile Include="LicenseManager.cs" />
-    <Compile Include="Forms\LicenseRegistrationDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\LicenseRegistrationDialog.Designer.cs">
-      <DependentUpon>LicenseRegistrationDialog.cs</DependentUpon>
-    </Compile>
     <Compile Include="LocalUserFileAppender.cs" />
-    <Compile Include="MailSender.cs" />
-    <Compile Include="PostSubmitter.cs" />
     <Compile Include="Forms\ProgressDialog.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -223,10 +151,6 @@
       <SubType>Designer</SubType>
       <DependentUpon>CellValueEditorDialog.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\CheckUpdatesDialog.resx">
-      <SubType>Designer</SubType>
-      <DependentUpon>CheckUpdatesDialog.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Forms\CompareDialog.resx">
       <DependentUpon>CompareDialog.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -239,25 +163,9 @@
       <SubType>Designer</SubType>
       <DependentUpon>ExportChangesDialog.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\FeedbackDialog.resx">
-      <SubType>Designer</SubType>
-      <DependentUpon>FeedbackDialog.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\FirstTimeDialog.resx">
-      <SubType>Designer</SubType>
-      <DependentUpon>FirstTimeDialog.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\HttpPostSenderDialog.resx">
-      <SubType>Designer</SubType>
-      <DependentUpon>HttpPostSenderDialog.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Forms\IndefiniteProgressDialog.resx">
       <SubType>Designer</SubType>
       <DependentUpon>IndefiniteProgressDialog.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\LicenseRegistrationDialog.resx">
-      <SubType>Designer</SubType>
-      <DependentUpon>LicenseRegistrationDialog.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\ProgressDialog.resx">
       <DependentUpon>ProgressDialog.cs</DependentUpon>
@@ -279,10 +187,6 @@
     <EmbeddedResource Include="Forms\SearchDataRowsDialog.resx">
       <SubType>Designer</SubType>
       <DependentUpon>SearchDataRowsDialog.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\SoftwareUpdatesDetailsDialog.resx">
-      <SubType>Designer</SubType>
-      <DependentUpon>SoftwareUpdatesDetailsDialog.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="SpinningProgress.resx">
       <DependentUpon>SpinningProgress.cs</DependentUpon>
@@ -343,13 +247,6 @@
     <Compile Include="SelectionBar.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="SendEmailWorker.cs" />
-    <Compile Include="Forms\SoftwareUpdatesDetailsDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\SoftwareUpdatesDetailsDialog.Designer.cs">
-      <DependentUpon>SoftwareUpdatesDetailsDialog.cs</DependentUpon>
-    </Compile>
     <Compile Include="SpinningProgress.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -385,14 +282,6 @@
     <Compile Include="WebSiteUtils.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\AutomaticUpdates\AutomaticUpdates.csproj">
-      <Project>{34DD929F-BA21-4A80-AA93-114AFCC15EE7}</Project>
-      <Name>AutomaticUpdates</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Common\Common.csproj">
-      <Project>{6CEE8102-55B6-42B8-AD74-2246AEB2D942}</Project>
-      <Name>Common</Name>
-    </ProjectReference>
     <ProjectReference Include="..\DiffControl\DiffControl.csproj">
       <Project>{310E7EA3-7370-4A28-9EA6-450B35E84C7C}</Project>
       <Name>DiffControl</Name>
@@ -436,23 +325,15 @@
   <ItemGroup>
     <None Include="Resources\pressed_feedback_button.png" />
   </ItemGroup>
-  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
+  <ItemGroup>
+    <PackageReference Include="Alsing.SyntaxBox" Version="2.0.0.0" />
+    <PackageReference Include="Be.Windows.Forms.HexBox" Version="1.6.1.0" />
+    <PackageReference Include="log4net" Version="2.0.8.0" />
+    <PackageReference Include="MultiPanelControl" Version="1.1.6.0" />
+    <PackageReference Include="System.Data.SQLite.Core" Version="1.0.113.0" />
+  </ItemGroup>
   <PropertyGroup>
-    <PostBuildEvent>
-    </PostBuildEvent>
+    <PostBuildEvent>copy /y $(SolutionDir)LICENSE</PostBuildEvent>
   </PropertyGroup>
-  <Import Project="..\packages\System.Data.SQLite.Core.1.0.104.0\build\net46\System.Data.SQLite.Core.targets" Condition="Exists('..\packages\System.Data.SQLite.Core.1.0.104.0\build\net46\System.Data.SQLite.Core.targets')" />
-  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
-    <PropertyGroup>
-      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
-    </PropertyGroup>
-    <Error Condition="!Exists('..\packages\System.Data.SQLite.Core.1.0.104.0\build\net46\System.Data.SQLite.Core.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\System.Data.SQLite.Core.1.0.104.0\build\net46\System.Data.SQLite.Core.targets'))" />
-  </Target>
+  <Import Project="$(SolutionDir)$(SolutionName).targets" />
 </Project>

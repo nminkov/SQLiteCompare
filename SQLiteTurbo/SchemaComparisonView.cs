@@ -3,6 +3,7 @@ using System.Text.RegularExpressions;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Data;
 using System.Text;
 using System.Windows.Forms;
@@ -26,7 +27,6 @@ namespace SQLiteTurbo
             _strikeout = new Font(this.Font, FontStyle.Strikeout);
         }
         #endregion
-
         #region Public Methods
         /// <summary>
         /// Used to set the comparison results into the view
@@ -50,8 +50,11 @@ namespace SQLiteTurbo
             _results = results;
             UpdateView();
             ShowMatchingRows();
+            if (grdSchemaDiffs.Rows.Count != 0)
+                grdSchemaDiffs.Rows[0].Selected = true;
+            grdSchemaDiffs.Focus();
         }
-        
+
         /// <summary>
         /// Returns TRUE if there is another difference in the grid after the selected row.
         /// </summary>
@@ -91,14 +94,16 @@ namespace SQLiteTurbo
                 {
                     grdSchemaDiffs.ClearSelection();
                     row.Selected = true;
+                    if (grdSchemaDiffs.CurrentCell != null)
+                        grdSchemaDiffs.CurrentCell = row.Cells[grdSchemaDiffs.CurrentCell.ColumnIndex];
                     grdSchemaDiffs.FirstDisplayedScrollingRowIndex = row.Index;
                     return;
-                }                
+                }
             } // for
         }
 
         /// <summary>
-        /// Returns TRUE if there is a previous difference before the 
+        /// Returns TRUE if there is a previous difference before the
         /// selected row.
         /// </summary>
         public bool HasPreviousDiff()
@@ -114,7 +119,7 @@ namespace SQLiteTurbo
                 SchemaComparisonItem item = (SchemaComparisonItem)row.Tag;
                 if (item.Result != ComparisonResult.Same || (item.TableChanges != null && !item.TableChanges.SameTables))
                     return true;
-            } // for            
+            } // for
             return false;
         }
 
@@ -136,11 +141,13 @@ namespace SQLiteTurbo
                 if (item.Result != ComparisonResult.Same || (item.TableChanges != null && !item.TableChanges.SameTables))
                 {
                     grdSchemaDiffs.ClearSelection();
-                    row.Selected = true;                    
+                    row.Selected = true;
+                    if (grdSchemaDiffs.CurrentCell != null)
+                        grdSchemaDiffs.CurrentCell = row.Cells[grdSchemaDiffs.CurrentCell.ColumnIndex];
                     grdSchemaDiffs.FirstDisplayedScrollingRowIndex = row.Index;
                     return;
                 }
-            } // for            
+            } // for
         }
 
         /// <summary>
@@ -365,6 +372,7 @@ namespace SQLiteTurbo
             dlg.SchemaChanged += new EventHandler(dlg_SchemaChanged);
             dlg.ShowDialog(this);
             dlg.SchemaChanged -= new EventHandler(dlg_SchemaChanged);
+            grdSchemaDiffs.Focus();
         }
 
         public void ExportDataDifferences()
@@ -477,7 +485,7 @@ namespace SQLiteTurbo
                 } // foreach
             } // foreach
 
-            // Update the number of changes still left                
+            // Update the number of changes still left
             lblTotalFound.Text = "" + count + " changes found";
         }
 
@@ -546,7 +554,7 @@ namespace SQLiteTurbo
 
             // Special treatment is required if the copied entity was a table. This is so
             // because when deleting a table - all of its associated triggers and indexes
-            // are deleted as well, and when copying a table - all of its associated 
+            // are deleted as well, and when copying a table - all of its associated
             // triggers and indexes are replacing the indexes and triggers in the target schema.
 
             if (item.LeftDdlStatement == null && orig != null && orig is SQLiteCreateTableStatement)
@@ -703,11 +711,11 @@ namespace SQLiteTurbo
                         // Add the trigger to the right database schema
                         SQLiteCreateTriggerStatement triggerCopy = (SQLiteCreateTriggerStatement)sci.LeftDdlStatement;
                         _leftSchema[SchemaObject.Trigger].Add(triggerCopy.ObjectName.ToString().ToLower(), triggerCopy);
-                    } // else                        
+                    } // else
                 } // foreach
             } // else
 
-            // Update the number of changes still left                
+            // Update the number of changes still left
             UpdateChangesCount();
         }
 
@@ -768,7 +776,7 @@ namespace SQLiteTurbo
 
             // Special treatment is required if the copied entity was a table. This is so
             // because when deleting a table - all of its associated triggers and indexes
-            // are deleted as well, and when copying a table - all of its associated 
+            // are deleted as well, and when copying a table - all of its associated
             // triggers and indexes are replacing the indexes and triggers in the target schema.
 
             if (item.RightDdlStatement == null && orig != null && orig is SQLiteCreateTableStatement)
@@ -925,17 +933,17 @@ namespace SQLiteTurbo
                         // Add the trigger to the right database schema
                         SQLiteCreateTriggerStatement triggerCopy = (SQLiteCreateTriggerStatement)sci.RightDdlStatement;
                         _rightSchema[SchemaObject.Trigger].Add(triggerCopy.ObjectName.ToString().ToLower(), triggerCopy);
-                    } // else                        
+                    } // else
                 } // foreach
             } // else
 
-            // Update the number of changes still left                
+            // Update the number of changes still left
             UpdateChangesCount();
         }
 
         private List<SQLiteCreateIndexStatement> ComputeIndexesExclusiveToTable(
-            SQLiteCreateTableStatement table1, 
-            Dictionary<SchemaObject, Dictionary<string, SQLiteDdlStatement>> schema1,             
+            SQLiteCreateTableStatement table1,
+            Dictionary<SchemaObject, Dictionary<string, SQLiteDdlStatement>> schema1,
             Dictionary<SchemaObject, Dictionary<string, SQLiteDdlStatement>> schema2)
         {
             List<SQLiteCreateIndexStatement> res = new List<SQLiteCreateIndexStatement>();
@@ -1031,50 +1039,94 @@ namespace SQLiteTurbo
             UpdateChangesCount();
         }
 
+        private void grdSchemaDiffs_CellPainting(object sender, DataGridViewCellPaintingEventArgs e)
+        {
+            if (e.RowIndex != -1)
+            {
+                DataGridViewRow row = grdSchemaDiffs.Rows[e.RowIndex];
+                SchemaComparisonItem item = (SchemaComparisonItem)row.Tag;
+                if (e.ColumnIndex > 1 &&
+                    item.Result == ComparisonResult.DifferentSchema &&
+                    item.TableChanges != null && !item.TableChanges.SameTables)
+                {
+                    var foreColor = DIFFERENT_DATA_COLOR;
+                    var backColor = DIFFERENT_SCHEMA_COLOR;
+                    if (row.Selected)
+                    {
+                        foreColor = ControlPaint.Dark(foreColor, 0.25f);
+                        backColor = ControlPaint.Dark(backColor, 0.25f);
+                    }
+                    using (HatchBrush brush = new HatchBrush(
+                        HatchStyle.WideUpwardDiagonal, foreColor, backColor))
+                    {
+                        e.Graphics.FillRectangle(brush, e.CellBounds);
+                    }
+                    e.Paint(e.CellBounds, DataGridViewPaintParts.ContentForeground |
+                        DataGridViewPaintParts.ContentBackground | DataGridViewPaintParts.Border);
+                    e.Handled = true;
+                }
+            }
+        }
+ 
+        private void SetCellColor(DataGridViewCell cell, Color color)
+        {
+            cell.Style.BackColor = color;
+            cell.Style.SelectionBackColor = ControlPaint.Dark(color, 0.25f);
+        }
+
+        private void ClearCellColor(DataGridViewCell cell)
+        {
+            cell.Style.BackColor = Color.Empty;
+            cell.Style.SelectionBackColor = Color.Empty;
+        }
+
         private void FormatRow(DataGridViewRow row)
         {
             SchemaComparisonItem item = (SchemaComparisonItem)row.Tag;
 
             row.Cells[2].Style.Font = this.Font;
             row.Cells[3].Style.Font = this.Font;
-            row.Cells[2].Style.BackColor = NORMAL_BGCOLOR;
-            row.Cells[3].Style.BackColor = NORMAL_BGCOLOR;
             row.Cells[2].Value = item.ObjectName;
             row.Cells[3].Value = item.ObjectName;
 
             if (item.ErrorMessage != null)
             {
-                row.Cells[2].Style.BackColor = COMPARISON_ERROR_COLOR;
-                row.Cells[3].Style.BackColor = COMPARISON_ERROR_COLOR;
+                SetCellColor(row.Cells[2], COMPARISON_ERROR_COLOR);
+                SetCellColor(row.Cells[3], COMPARISON_ERROR_COLOR);
             }
             else if (item.TableChanges != null && !item.TableChanges.SameTables)
             {
-                row.Cells[2].Style.BackColor = DIFFERENT_DATA_COLOR;
-                row.Cells[3].Style.BackColor = DIFFERENT_DATA_COLOR;
+                SetCellColor(row.Cells[2], DIFFERENT_DATA_COLOR);
+                SetCellColor(row.Cells[3], DIFFERENT_DATA_COLOR);
             }
             else if (item.Result == ComparisonResult.ExistsInLeftDB)
             {
                 row.Cells[3].Style.Font = _strikeout;
-                row.Cells[3].Style.BackColor = NOT_EXIST_COLOR;
+                SetCellColor(row.Cells[3], NOT_EXIST_COLOR);
             }
             else if (item.Result == ComparisonResult.ExistsInRightDB)
             {
                 row.Cells[2].Style.Font = _strikeout;
-                row.Cells[2].Style.BackColor = NOT_EXIST_COLOR;
+                SetCellColor(row.Cells[2], NOT_EXIST_COLOR);
             }
             else if (item.Result == ComparisonResult.DifferentSchema)
             {
-                row.Cells[2].Style.BackColor = DIFFERENT_SCHEMA_COLOR;
-                row.Cells[3].Style.BackColor = DIFFERENT_SCHEMA_COLOR;
+                SetCellColor(row.Cells[2], DIFFERENT_SCHEMA_COLOR);
+                SetCellColor(row.Cells[3], DIFFERENT_SCHEMA_COLOR);
             }
             else if (item.Result == ComparisonResult.Same)
             {
-                if (item.LeftDdlStatement == null)
+                if (item.LeftDdlStatement == null) // Same for RightDdlStatement
                 {
                     row.Cells[2].Style.Font = _strikeout;
-                    row.Cells[2].Style.BackColor = NOT_EXIST_COLOR;
+                    SetCellColor(row.Cells[2], NOT_EXIST_COLOR);
                     row.Cells[3].Style.Font = _strikeout;
-                    row.Cells[3].Style.BackColor = NOT_EXIST_COLOR;
+                    SetCellColor(row.Cells[3], NOT_EXIST_COLOR);
+                }
+                else
+                {
+                    ClearCellColor(row.Cells[2]);
+                    ClearCellColor(row.Cells[3]);
                 }
             }
         }
@@ -1092,7 +1144,7 @@ namespace SQLiteTurbo
                         stmt = item.RightDdlStatement;
 
                     grdSchemaDiffs.Rows.Add(GetItemImage(item), GetItemType(item), SQLiteParser.Utils.Chop(item.ObjectName),
-                        SQLiteParser.Utils.Chop(item.ObjectName));                    
+                        SQLiteParser.Utils.Chop(item.ObjectName));
                     DataGridViewRow row = grdSchemaDiffs.Rows[grdSchemaDiffs.Rows.Count - 1];
                     row.Tag = item;
 
@@ -1120,8 +1172,8 @@ namespace SQLiteTurbo
                     stmt is SQLiteCreateIndexStatement && cbxShowIndexDifferences.Checked ||
                     stmt is SQLiteCreateViewStatement && cbxShowViewDifferences.Checked ||
                     stmt is SQLiteCreateTriggerStatement && cbxShowTriggerDifferences.Checked;
-                bool diff = (cbxShowOnlyDifferences.Checked && 
-                    (item.Result != ComparisonResult.Same || (item.TableChanges != null && !item.TableChanges.SameTables))) || 
+                bool diff = (cbxShowOnlyDifferences.Checked &&
+                    (item.Result != ComparisonResult.Same || (item.TableChanges != null && !item.TableChanges.SameTables))) ||
                     !cbxShowOnlyDifferences.Checked;
                 match = match && diff;
 
@@ -1173,7 +1225,6 @@ namespace SQLiteTurbo
         #endregion
 
         #region Private Constants
-        private Color NORMAL_BGCOLOR = SystemColors.Window;
         private Color NOT_EXIST_COLOR = Color.LightGray;
         private Color DIFFERENT_SCHEMA_COLOR = Color.Khaki;
         private Color DIFFERENT_DATA_COLOR = Color.LightBlue;

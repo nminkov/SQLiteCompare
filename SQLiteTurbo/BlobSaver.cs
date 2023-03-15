@@ -1,6 +1,5 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
+using System.IO;
 
 namespace SQLiteTurbo
 {
@@ -11,7 +10,7 @@ namespace SQLiteTurbo
     public class BlobSaver : AbstractWorker, IDisposable
     {
         #region Constructors & Destructors
-        public BlobSaver(string dbpath, string tableName, string columnName, long rowId, string blobFile)
+        public BlobSaver(string dbpath, string tableName, string columnName, long rowId, FileStream blobFile)
             : base("BlobSaver")
         {
             _blobWriter = new BlobReaderWriter(dbpath, false);
@@ -72,16 +71,11 @@ namespace SQLiteTurbo
         #region Protected Virtual Methods
         protected virtual void Dispose(bool disposing)
         {
-            if (!_disposed)
+            if (_blobWriter != null)
             {
-                if (disposing)
-                {
-                    // Release managed resources
-                    _blobWriter.Dispose();
-                }
-
-                // Mark that the object was disposed
-                _disposed = true;
+                // Release managed resources
+                _blobWriter.Dispose();
+                _blobWriter = null;
             }
         }
         #endregion
@@ -118,12 +112,11 @@ namespace SQLiteTurbo
 
         #region Private Variables
         private long _rowId;
-        private string _blobFile;
+        private FileStream _blobFile = null;
         private byte[] _buffer;
         private string _tableName;
         private string _columnName;
         private int _progress = 0;
-        private bool _disposed;
         private BlobReaderWriter _blobWriter = null;
         #endregion
     }

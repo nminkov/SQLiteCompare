@@ -7,7 +7,6 @@ using System.ComponentModel;
 using System.Data.SQLite;
 using SQLiteParser;
 using log4net;
-using Common;
 
 namespace SQLiteTurbo
 {
@@ -77,15 +76,13 @@ namespace SQLiteTurbo
                 catch (UserCancellationException cex)
                 {
                     _log.Debug("The user chose to cancel a compare operation");
-                    if (_result != null)
-                        CleanupTempFiles(_result);
+                    SchemaComparisonItem.CleanupTempFiles(_result);
                     NotifyPrimaryProgress(true, 100, cex);
                 }
                 catch (Exception ex)
                 {
                     _log.Error("failed to compare databases", ex);
-                    if (_result != null)
-                        CleanupTempFiles(_result);
+                    SchemaComparisonItem.CleanupTempFiles(_result);
                     NotifyPrimaryProgress(true, 100, ex);
                 } // catch
             };
@@ -214,20 +211,6 @@ namespace SQLiteTurbo
                     if (_cancelled)
                         throw new UserCancellationException();
                 }
-            } // foreach
-        }
-
-        /// <summary>
-        /// Cleanup any table changes leftovers
-        /// </summary>
-        /// <param name="result">The global comparison results object</param>
-        private void CleanupTempFiles(Dictionary<SchemaObject, List<SchemaComparisonItem>> result)
-        {
-            List<SchemaComparisonItem> tableItems = result[SchemaObject.Table];
-            foreach (SchemaComparisonItem item in tableItems)
-            {
-                if (item.TableChanges != null)
-                    item.TableChanges.Dispose();
             } // foreach
         }
 
@@ -367,15 +350,14 @@ namespace SQLiteTurbo
             {
                 conn.Open();
 
-                SQLiteCommand queryCount = new SQLiteCommand(
-                    @"SELECT COUNT(*) FROM sqlite_master WHERE sql IS NOT NULL", conn);
-                long count = (long)queryCount.ExecuteScalar();
-
-                int index = 0;
-                SQLiteCommand query = new SQLiteCommand(
-                    @"SELECT * FROM sqlite_master WHERE sql IS NOT NULL", conn);
+                using (SQLiteCommand queryCount = new SQLiteCommand(
+                    @"SELECT COUNT(*) FROM sqlite_master WHERE sql IS NOT NULL", conn))
+                using (SQLiteCommand query = new SQLiteCommand(
+                    @"SELECT * FROM sqlite_master WHERE sql IS NOT NULL", conn))
                 using (SQLiteDataReader reader = query.ExecuteReader())
                 {
+                    long count = (long)queryCount.ExecuteScalar();
+                    int index = 0;
                     while (reader.Read())
                     {
                         string sql = (string)reader["sql"];
@@ -469,7 +451,6 @@ namespace SQLiteTurbo
         private Scanner _scanner = new Scanner();
         private Parser _parser = new Parser();
         private Dictionary<SchemaObject, List<SchemaComparisonItem>> _result;
-        private Dictionary<string, TableChanges> _tchanges;
         private Dictionary<SchemaObject, Dictionary<string, SQLiteDdlStatement>> _leftSchema;
         private Dictionary<SchemaObject, Dictionary<string, SQLiteDdlStatement>> _rightSchema;
         private ILog _log = LogManager.GetLogger(typeof(CompareWorker));

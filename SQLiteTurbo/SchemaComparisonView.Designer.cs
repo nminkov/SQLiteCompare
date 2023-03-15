@@ -78,8 +78,10 @@ namespace SQLiteTurbo
             this.grdSchemaDiffs.RowHeadersVisible = false;
             this.grdSchemaDiffs.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.grdSchemaDiffs.Size = new System.Drawing.Size(856, 503);
+            this.grdSchemaDiffs.StandardTab = true;
             this.grdSchemaDiffs.TabIndex = 0;
             this.grdSchemaDiffs.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.grdSchemaDiffs_CellDoubleClick);
+            this.grdSchemaDiffs.CellPainting += new System.Windows.Forms.DataGridViewCellPaintingEventHandler(this.grdSchemaDiffs_CellPainting);
             this.grdSchemaDiffs.SelectionChanged += new System.EventHandler(this.grdSchemaDiffs_SelectionChanged);
             // 
             // Column1
@@ -121,7 +123,7 @@ namespace SQLiteTurbo
             this.cbxShowTableDifferences.Location = new System.Drawing.Point(159, 11);
             this.cbxShowTableDifferences.Name = "cbxShowTableDifferences";
             this.cbxShowTableDifferences.Size = new System.Drawing.Size(58, 17);
-            this.cbxShowTableDifferences.TabIndex = 1;
+            this.cbxShowTableDifferences.TabIndex = 2;
             this.cbxShowTableDifferences.Text = "Tables";
             this.cbxShowTableDifferences.UseVisualStyleBackColor = true;
             this.cbxShowTableDifferences.CheckedChanged += new System.EventHandler(this.cbxShowTableDifferences_CheckedChanged);
@@ -134,7 +136,7 @@ namespace SQLiteTurbo
             this.cbxShowIndexDifferences.Location = new System.Drawing.Point(223, 11);
             this.cbxShowIndexDifferences.Name = "cbxShowIndexDifferences";
             this.cbxShowIndexDifferences.Size = new System.Drawing.Size(63, 17);
-            this.cbxShowIndexDifferences.TabIndex = 2;
+            this.cbxShowIndexDifferences.TabIndex = 3;
             this.cbxShowIndexDifferences.Text = "Indexes";
             this.cbxShowIndexDifferences.UseVisualStyleBackColor = true;
             this.cbxShowIndexDifferences.CheckedChanged += new System.EventHandler(this.cbxShowIndexDifferences_CheckedChanged);
@@ -147,7 +149,7 @@ namespace SQLiteTurbo
             this.cbxShowViewDifferences.Location = new System.Drawing.Point(292, 11);
             this.cbxShowViewDifferences.Name = "cbxShowViewDifferences";
             this.cbxShowViewDifferences.Size = new System.Drawing.Size(54, 17);
-            this.cbxShowViewDifferences.TabIndex = 3;
+            this.cbxShowViewDifferences.TabIndex = 4;
             this.cbxShowViewDifferences.Text = "Views";
             this.cbxShowViewDifferences.UseVisualStyleBackColor = true;
             this.cbxShowViewDifferences.CheckedChanged += new System.EventHandler(this.cbxShowViewDifferences_CheckedChanged);
@@ -160,7 +162,7 @@ namespace SQLiteTurbo
             this.cbxShowTriggerDifferences.Location = new System.Drawing.Point(352, 11);
             this.cbxShowTriggerDifferences.Name = "cbxShowTriggerDifferences";
             this.cbxShowTriggerDifferences.Size = new System.Drawing.Size(64, 17);
-            this.cbxShowTriggerDifferences.TabIndex = 4;
+            this.cbxShowTriggerDifferences.TabIndex = 5;
             this.cbxShowTriggerDifferences.Text = "Triggers";
             this.cbxShowTriggerDifferences.UseVisualStyleBackColor = true;
             this.cbxShowTriggerDifferences.CheckedChanged += new System.EventHandler(this.cbxShowTriggerDifferences_CheckedChanged);
@@ -171,7 +173,7 @@ namespace SQLiteTurbo
             this.cbxShowOnlyDifferences.Location = new System.Drawing.Point(6, 11);
             this.cbxShowOnlyDifferences.Name = "cbxShowOnlyDifferences";
             this.cbxShowOnlyDifferences.Size = new System.Drawing.Size(130, 17);
-            this.cbxShowOnlyDifferences.TabIndex = 5;
+            this.cbxShowOnlyDifferences.TabIndex = 1;
             this.cbxShowOnlyDifferences.Text = "Show differences only";
             this.cbxShowOnlyDifferences.UseVisualStyleBackColor = true;
             this.cbxShowOnlyDifferences.CheckedChanged += new System.EventHandler(this.cbxShowOnlyDifferences_CheckedChanged);
@@ -248,7 +250,7 @@ namespace SQLiteTurbo
             this.label5.Location = new System.Drawing.Point(464, 12);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(32, 13);
-            this.label5.TabIndex = 15;
+            this.label5.TabIndex = 6;
             this.label5.Text = "Filter:";
             // 
             // txtSearch
@@ -256,7 +258,7 @@ namespace SQLiteTurbo
             this.txtSearch.Location = new System.Drawing.Point(501, 9);
             this.txtSearch.Name = "txtSearch";
             this.txtSearch.Size = new System.Drawing.Size(183, 20);
-            this.txtSearch.TabIndex = 16;
+            this.txtSearch.TabIndex = 7;
             this.txtSearch.TextChanged += new System.EventHandler(this.txtSearch_TextChanged);
             // 
             // flowLayoutPanel1
@@ -290,15 +292,15 @@ namespace SQLiteTurbo
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.flowLayoutPanel1);
-            this.Controls.Add(this.txtSearch);
             this.Controls.Add(this.label5);
             this.Controls.Add(this.lblTotalFound);
-            this.Controls.Add(this.cbxShowOnlyDifferences);
-            this.Controls.Add(this.cbxShowTriggerDifferences);
-            this.Controls.Add(this.cbxShowViewDifferences);
-            this.Controls.Add(this.cbxShowIndexDifferences);
-            this.Controls.Add(this.cbxShowTableDifferences);
             this.Controls.Add(this.grdSchemaDiffs);
+            this.Controls.Add(this.cbxShowOnlyDifferences);
+            this.Controls.Add(this.cbxShowTableDifferences);
+            this.Controls.Add(this.cbxShowIndexDifferences);
+            this.Controls.Add(this.cbxShowViewDifferences);
+            this.Controls.Add(this.cbxShowTriggerDifferences);
+            this.Controls.Add(this.txtSearch);
             this.Name = "SchemaComparisonView";
             this.Size = new System.Drawing.Size(865, 569);
             ((System.ComponentModel.ISupportInitialize)(this.grdSchemaDiffs)).EndInit();

@@ -5,7 +5,6 @@ using System.Text;
 using System.Data.SQLite;
 using SQLiteParser;
 using log4net;
-using Common;
 
 namespace SQLiteTurbo
 {
@@ -186,40 +185,35 @@ namespace SQLiteTurbo
             SQLiteCreateTriggerStatement right, string leftdb, string rightdb, bool leftToRight)
         {
             using (SQLiteConnection leftConn = MakeDbConnection(leftdb))
+            using (SQLiteConnection rightConn = MakeDbConnection(rightdb))
             {
-                leftConn.Open();
-                using (SQLiteConnection rightConn = MakeDbConnection(rightdb))
+                SQLiteTransaction tx = null;
+                try
                 {
-                    rightConn.Open();
+                    string name;
+                    if (left != null)
+                        name = left.ObjectName.ToString();
+                    else
+                        name = right.ObjectName.ToString();
 
-                    SQLiteTransaction tx = null;
-                    try
+                    if (leftToRight)
                     {
-                        string name;
-                        if (left != null)
-                            name = left.ObjectName.ToString();
-                        else
-                            name = right.ObjectName.ToString();
-
-                        if (leftToRight)
-                        {
-                            tx = rightConn.BeginTransaction();
-                            ReplaceTrigger(name, rightSchema, rightConn, left, tx, 15, 70);
-                        }
-                        else
-                        {
-                            tx = leftConn.BeginTransaction();
-                            ReplaceTrigger(name, leftSchema, leftConn, right, tx, 15, 70);
-                        }
-
-                        tx.Commit();
+                        tx = rightConn.BeginTransaction();
+                        ReplaceTrigger(name, rightSchema, rightConn, left, tx, 15, 70);
                     }
-                    catch (Exception ex)
+                    else
                     {
-                        tx.Rollback();
-                        throw;
-                    } // catch
-                } // using
+                        tx = leftConn.BeginTransaction();
+                        ReplaceTrigger(name, leftSchema, leftConn, right, tx, 15, 70);
+                    }
+
+                    tx.Commit();
+                }
+                catch (Exception ex)
+                {
+                    tx.Rollback();
+                    throw;
+                } // catch
             } // using
         }
 
@@ -230,40 +224,35 @@ namespace SQLiteTurbo
             SQLiteCreateViewStatement right, string leftdb, string rightdb, bool leftToRight)
         {
             using (SQLiteConnection leftConn = MakeDbConnection(leftdb))
+            using (SQLiteConnection rightConn = MakeDbConnection(rightdb))
             {
-                leftConn.Open();
-                using (SQLiteConnection rightConn = MakeDbConnection(rightdb))
+                SQLiteTransaction tx = null;
+                try
                 {
-                    rightConn.Open();
+                    string name;
+                    if (left != null)
+                        name = left.ObjectName.ToString();
+                    else
+                        name = right.ObjectName.ToString();
 
-                    SQLiteTransaction tx = null;
-                    try
+                    if (leftToRight)
                     {
-                        string name;
-                        if (left != null)
-                            name = left.ObjectName.ToString();
-                        else
-                            name = right.ObjectName.ToString();
-
-                        if (leftToRight)
-                        {
-                            tx = rightConn.BeginTransaction();
-                            ReplaceView(name, rightSchema, rightConn, left, tx, 15, 70);
-                        }
-                        else
-                        {
-                            tx = leftConn.BeginTransaction();
-                            ReplaceView(name, leftSchema, leftConn, right, tx, 15, 70);
-                        }
-
-                        tx.Commit();
+                        tx = rightConn.BeginTransaction();
+                        ReplaceView(name, rightSchema, rightConn, left, tx, 15, 70);
                     }
-                    catch (Exception ex)
+                    else
                     {
-                        tx.Rollback();
-                        throw;
-                    } // catch
-                } // using
+                        tx = leftConn.BeginTransaction();
+                        ReplaceView(name, leftSchema, leftConn, right, tx, 15, 70);
+                    }
+
+                    tx.Commit();
+                }
+                catch (Exception ex)
+                {
+                    tx.Rollback();
+                    throw;
+                } // catch
             } // using
         }
 
@@ -274,40 +263,35 @@ namespace SQLiteTurbo
             SQLiteCreateIndexStatement right, string leftdb, string rightdb, bool leftToRight)
         {
             using (SQLiteConnection leftConn = MakeDbConnection(leftdb))
+            using (SQLiteConnection rightConn = MakeDbConnection(rightdb))
             {
-                leftConn.Open();
-                using (SQLiteConnection rightConn = MakeDbConnection(rightdb))
-                {                    
-                    rightConn.Open();
+                SQLiteTransaction tx = null;
+                try
+                {
+                    string name;
+                    if (left != null)
+                        name = left.ObjectName.ToString();
+                    else
+                        name = right.ObjectName.ToString();
 
-                    SQLiteTransaction tx = null;
-                    try
+                    if (leftToRight)
                     {
-                        string name;
-                        if (left != null)
-                            name = left.ObjectName.ToString();
-                        else
-                            name = right.ObjectName.ToString();
-
-                        if (leftToRight)
-                        {
-                            tx = rightConn.BeginTransaction();
-                            ReplaceIndex(name, rightSchema, rightConn, left, tx, 15, 70);
-                        }
-                        else
-                        {
-                            tx = leftConn.BeginTransaction();
-                            ReplaceIndex(name, leftSchema, leftConn, right, tx, 15, 70);
-                        }
-
-                        tx.Commit();
+                        tx = rightConn.BeginTransaction();
+                        ReplaceIndex(name, rightSchema, rightConn, left, tx, 15, 70);
                     }
-                    catch (Exception ex)
+                    else
                     {
-                        tx.Rollback();
-                        throw;
-                    } // catch
-                } // using
+                        tx = leftConn.BeginTransaction();
+                        ReplaceIndex(name, leftSchema, leftConn, right, tx, 15, 70);
+                    }
+
+                    tx.Commit();
+                }
+                catch (Exception ex)
+                {
+                    tx.Rollback();
+                    throw;
+                } // catch
             } // using
         }
 
@@ -750,7 +734,9 @@ namespace SQLiteTurbo
         {
             SQLiteConnectionStringBuilder sb = new SQLiteConnectionStringBuilder();
             sb.DataSource = fpath;
-            return new SQLiteConnection(sb.ConnectionString);
+            var conn = new SQLiteConnection(sb.ConnectionString);
+            conn.Open();
+            return conn;
         }
 
         private void CopyTable(
@@ -763,24 +749,19 @@ namespace SQLiteTurbo
             bool leftToRight)
         {
             using (SQLiteConnection leftConn = MakeDbConnection(leftdb))
+            using (SQLiteConnection rightConn = MakeDbConnection(rightdb))
             {
-                leftConn.Open();
-                using (SQLiteConnection rightConn = MakeDbConnection(rightdb))
-                {
-                    rightConn.Open();
+                string name;
+                if (left != null)
+                    name = left.ObjectName.ToString();
+                else
+                    name = right.ObjectName.ToString();
 
-                    string name;
-                    if (left != null)
-                        name = left.ObjectName.ToString();
-                    else
-                        name = right.ObjectName.ToString();
-
-                    if (leftToRight)
-                        ReplaceTable(leftSchema, rightSchema, name, leftConn, rightConn, left);
-                    else
-                        ReplaceTable(rightSchema, leftSchema, name, rightConn, leftConn, right);
-                } // using
-            } // using            
+                if (leftToRight)
+                    ReplaceTable(leftSchema, rightSchema, name, leftConn, rightConn, left);
+                else
+                    ReplaceTable(rightSchema, leftSchema, name, rightConn, leftConn, right);
+            } // using
         }
         #endregion
 

@@ -1,11 +1,8 @@
 using System;
 using System.IO;
-using System.Threading;
-using System.Collections.Generic;
 using System.Text;
 using System.Runtime.InteropServices;
 using System.Data.SQLite;
-using Common;
 
 namespace SQLiteTurbo
 {
@@ -310,38 +307,29 @@ namespace SQLiteTurbo
         /// <param name="fpath">The path to the file that will contain the BLOB data.</param>
         /// <param name="reader">An optional delegate that will be called while reading the BLOB and can be used
         /// to notify about the progress of the write process.</param>
-        public void ReadBlobToFile(string tableName, string columnName, long rowId, string fpath, BlobReader reader)
+        public void ReadBlobToFile(string tableName, string columnName, long rowId, FileStream fs, BlobReader reader)
         {
             if (_disposed)
                 throw new ObjectDisposedException("Object was disposed.");
 
-            if (File.Exists(fpath))
-                File.Delete(fpath);
+            bool first = true;
 
-            using (FileStream fs = File.Create(fpath, PAGESIZE))
+            // Use my own reader to get the BLOB chunks from the database and insert them into the file.
+            BlobReader myreader = new BlobReader(delegate(byte[] buffer, int length, int bytesRead, int totalBytes, ref bool cancel)
             {
-                bool first = true;
-
-                // Use my own reader to get the BLOB chunks from the database and insert them into the file.
-                BlobReader myreader = new BlobReader(delegate(byte[] buffer, int length, int bytesRead, int totalBytes, ref bool cancel)
+                if (first)
                 {
-                    if (first)
-                    {
-                        // Set the overal size of the file before starting to write its contents.
-                        fs.SetLength(totalBytes);
-                        first = false;
-                    }
+                    // Set the overal size of the file before starting to write its contents.
+                    fs.SetLength(totalBytes);
+                    first = false;
+                }
+                // Write this chunk to the file.
+                fs.Write(buffer, 0, length);
+                // Call the actual delegate if necessary
+                reader?.Invoke(buffer, length, bytesRead, totalBytes, ref cancel);
+            });
 
-                    // Write this chunk to the file.
-                    fs.Write(buffer, 0, length);
-
-                    // Call the actual delegate if necessary
-                    if (reader != null)
-                        reader(buffer, length, bytesRead, totalBytes, ref cancel);
-                });
-
-                ReadBlob(tableName, columnName, rowId, myreader);
-            } // using
+            ReadBlob(tableName, columnName, rowId, myreader);
         }
 
         /// <summary>
@@ -354,34 +342,32 @@ namespace SQLiteTurbo
         /// <param name="rowId">The ROwID where the BLOB exists.</param>
         /// <param name="fpath">The path to the file that contains the BLOB data that should be written to the database.</param>
         /// <param name="writer">An optional writer delegate that will be informed throughout the process.</param>
-        public void WriteBlobFromFile(string tableName, string columnName, long rowId, string fpath, BlobWriter writer)
+        public void WriteBlobFromFile(string tableName, string columnName, long rowId, FileStream fs, BlobWriter writer)
         {
             if (_disposed)
                 throw new ObjectDisposedException("Object was disposed.");
 
-            using (FileStream fs = File.Open(fpath, FileMode.Open, FileAccess.Read, FileShare.Read))
+            long len = fs.Length;
+
+            // Ensure that we don't have too large files
+            if (len > int.MaxValue)
+                throw new SQLiteException("The file is too large to be written as a BLOB");
+
+            fs.Seek(0, SeekOrigin.Begin);
+
+            BlobWriter mywriter = new BlobWriter(delegate(byte[] buffer, int max, int written, int total, ref bool cancel)
             {
-                long len = fs.Length;
+                // Read the bytes from the file
+                int nbytes = fs.Read(buffer, 0, max);
 
-                // Ensure that we don't have too large files
-                if (len > int.MaxValue)
-                    throw new SQLiteException("The file is too large to be written as a BLOB");
+                // Call the actual delegate if necessary (but ignore its outputs).
+                writer?.Invoke(buffer, max, written, total, ref cancel);
 
-                BlobWriter mywriter = new BlobWriter(delegate(byte[] buffer, int max, int written, int total, ref bool cancel)
-                {
-                    // Read the bytes from the file
-                    int nbytes = fs.Read(buffer, 0, max);
+                // Return the number of bytes that were actually read from the file.
+                return nbytes;
+            });
 
-                    // Call the actual delegate if necessary (but ignore its outputs).
-                    if (writer != null)
-                        writer(buffer, max, written, total, ref cancel);
-
-                    // Return the number of bytes that were actually read from the file.
-                    return nbytes;
-                });
-
-                WriteBlob(tableName, columnName, rowId, (int)len, mywriter);
-            } // using
+            WriteBlob(tableName, columnName, rowId, (int)len, mywriter);
         }
 
         /// <summary>
@@ -856,7 +842,7 @@ namespace SQLiteTurbo
 
         #region Private Constants
         private const int PAGESIZE = 4096;
-        private const string SQLITE_DLL = "System.Data.SQLite.DLL";
+        private const string SQLITE_DLL = "SQLite.Interop.dll";
         private const int SQLITE_OPEN_READONLY = 0x00000001;
         #endregion
 

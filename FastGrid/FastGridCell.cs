@@ -26,15 +26,13 @@ namespace FastGridApp
 
         public virtual void OnPaint(Graphics g, Rectangle bbox, bool isRowSelected)
         {
-            if (isRowSelected)
-            {
-                g.FillRectangle(SystemBrushes.Highlight, bbox);
-            }
-            else
-            {
-                using (SolidBrush b = new SolidBrush(GetBackColor()))
-                    g.FillRectangle(b, bbox);
-            }
+            Color color = _style.BackColor;
+            if (color == Color.Empty)
+                color = isRowSelected ? SystemColors.Highlight : _owner.BackColor;
+            else if (isRowSelected)
+                color = ControlPaint.Dark(color, 0.25f);
+            using (SolidBrush b = new SolidBrush(color))
+                g.FillRectangle(b, bbox);
 
             if (_value != null)
             {

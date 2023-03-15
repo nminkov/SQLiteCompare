@@ -22,9 +22,6 @@ namespace DiffControl
         public event EventHandler ScrollNeedsUpdate;
         public event EventHandler SnapshotChanging;
         public event EventHandler SnapshotChanged;
-        public event EventHandler UndoRequested;
-        public event EventHandler RedoRequested;
-        public event EventHandler SaveRequested;
         #endregion
 
         #region Constructors
@@ -66,7 +63,7 @@ namespace DiffControl
 
             if (_lines.Count > lineIndex && _lines[lineIndex].Text == null)
             {
-                // In case this is a place holder line - set the column index to be 
+                // In case this is a placeholder line - set the column index to be 
                 // to the beginning of the line.
                 colIndex = 0;
             }
@@ -884,7 +881,12 @@ namespace DiffControl
             {
                 HandleBackPressed(line, col);
                 return;
-            } // else
+            }
+            else if (e.KeyCode == Keys.Delete)
+            {
+                HandleDeletePressed(line, col);
+                return;
+            }
             else if (e.KeyCode == Keys.Enter)
             {
                 HandleEnterPressed(line, col);
@@ -893,11 +895,6 @@ namespace DiffControl
             else if (e.KeyCode == Keys.C && e.Control)
             {
                 HandleCopyToClipboard();
-                return;
-            }
-            else if (e.KeyCode == Keys.S && e.Control)
-            {
-                HandleSave();
                 return;
             }
             else if (e.KeyCode == Keys.V && e.Control)
@@ -915,18 +912,9 @@ namespace DiffControl
                 HandleSelectAll();
                 return;
             }
-            else if (e.Control && (e.KeyCode == Keys.Z || e.KeyCode == Keys.Y))
+            else if (e.Control)
             {
-                if (e.KeyCode == Keys.Z)
-                {
-                    if (UndoRequested != null)
-                        UndoRequested(this, EventArgs.Empty);
-                }
-                else
-                {
-                    if (RedoRequested != null)
-                        RedoRequested(this, EventArgs.Empty);
-                }
+                e.IsInputKey = false;
                 return;
             }
 
@@ -1070,28 +1058,6 @@ namespace DiffControl
                 range.SetRange(new DiffEditPosition(0, 0), new DiffEditPosition(_lines.Count - 1, _lines[_lines.Count - 1].Text.Length));
 
             return range;
-        }
-
-        /// <summary>
-        /// Notifies externals listeners that a SAVE was requested.
-        /// </summary>
-        private void HandleSave()
-        {
-            Timer tm = new Timer();
-            tm.Interval = 200;
-            tm.Tick += HandleSaveTimer;
-            tm.Start();
-        }
-
-        private void HandleSaveTimer(object sender, EventArgs e)
-        {
-            Timer tm = (Timer)sender;
-            tm.Stop();
-            tm.Tick -= HandleSaveTimer;            
-            tm.Dispose();
-
-            if (SaveRequested != null)
-                SaveRequested(this, EventArgs.Empty);
         }
 
         /// <summary>
@@ -1654,6 +1620,26 @@ namespace DiffControl
                 if (SnapshotChanged != null)
                     SnapshotChanged(this, EventArgs.Empty);
             }
+        }
+
+        /// <summary>
+        /// Handle DELETE keypress events
+        /// </summary>
+        /// <param name="line">The line where the DELETE was clicked</param>
+        /// <param name="col">The column where the DELETE was clicked</param>
+        private void HandleDeletePressed(int line, int col)
+        {
+            if (_selection.IsEmpty)
+            {
+                ++col;
+                while (_lines[line].Text == null || col > _lines[line].Text.Length)
+                {
+                    col = 0;
+                    if (++line >= _lines.Count)
+                        return; // Don't try to move beyond end
+                }
+            }
+            HandleBackPressed(line, col);
         }
 
         /// <summary>

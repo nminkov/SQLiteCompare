@@ -9,6 +9,7 @@ using System.Reflection;
 using System.Diagnostics;
 using SQLiteParser;
 using System.Linq;
+using System.Globalization;
 
 namespace SQLiteTurbo
 {
@@ -33,27 +34,15 @@ namespace SQLiteTurbo
         /// SQLite file</returns>
         public static float GetSQLiteVersion(string fpath)
         {
-			int index = 0;
-            byte[] buffer = new byte[1024];
+            string vstr = string.Empty;
             using (FileStream fs = File.Open(fpath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
-            {                
-                int res = fs.ReadByte();
-                while (res != -1 && res != 0 && index<buffer.Length)
-                {
-                    buffer[index] = (byte)res;
-                    res = fs.ReadByte();
-                    index++;
-                } // while
-
-                fs.Close();
-            } // using
-
-            // A valid SQLite file will have a much lower index value
-            if (index == buffer.Length)
-                return -1F;
-            
-            // Convert the bytes array that was read to an ASCII string
-            string vstr = Encoding.ASCII.GetString(buffer, 0, index);
+            {
+                var buffer = new byte[1024];
+                var index = fs.Read(buffer, 0, buffer.Length);
+                index = Array.IndexOf(buffer, (byte)0, 0, index);
+                if (index >= 0)
+                    vstr = Encoding.ASCII.GetString(buffer, 0, index);
+            }
 
             // Check for version 3 and above file format
             Regex rx3 = new Regex(@"SQLite format (\d+(\.\d+)?)");
@@ -61,7 +50,7 @@ namespace SQLiteTurbo
             if (m.Success)
             {
                 float res;
-                if (float.TryParse(m.Groups[1].Value, out res))
+                if (float.TryParse(m.Groups[1].Value, NumberStyles.Any, CultureInfo.InvariantCulture, out res))
                     return res;
                 else
                     return -1F;
@@ -73,7 +62,7 @@ namespace SQLiteTurbo
             if (m.Success)
             {
                 float res;
-                if (float.TryParse(m.Groups[1].Value, out res))
+                if (float.TryParse(m.Groups[1].Value, NumberStyles.Any, CultureInfo.InvariantCulture, out res))
                     return res;
             }
 
@@ -204,51 +193,6 @@ namespace SQLiteTurbo
                 return true;
             else
                 return ltype == rtype;
-        }
-
-        /// <summary>
-        /// Returns the path to the license file
-        /// </summary>
-        /// <returns></returns>
-        public static string GetLicenseFilePath()
-        {
-            string fpath = GetInstallationDirectory() + "\\license.lic";
-            return fpath;
-        }
-
-        /// <summary>
-        /// Get the instalation directory path
-        /// </summary>
-        public static string GetInstallationDirectory()
-        {
-            Process proc = Process.GetCurrentProcess();
-            string bp = proc.Modules[0].FileName;
-            bp = Path.GetDirectoryName(bp);
-            return bp;
-        }
-
-        /// <summary>
-        /// Get the version number of the software
-        /// </summary>
-        /// <returns></returns>
-        public static string GetSoftwareVersion()
-        {
-            Assembly assembly = Assembly.GetExecutingAssembly();
-            string ver = "" + assembly.GetName().Version.Major + "." +
-                assembly.GetName().Version.Minor + " p" +
-                assembly.GetName().Version.Revision;
-            return ver;
-        }
-
-        /// <summary>
-        /// Get the software build number
-        /// </summary>
-        /// <returns></returns>
-        public static string GetSoftwareBuild()
-        {
-            Assembly assembly = Assembly.GetExecutingAssembly();
-            string ver = "" + assembly.GetName().Version.Build;
-            return ver;
         }
 
         /// <summary>
@@ -1031,7 +975,9 @@ namespace SQLiteTurbo
             SQLiteConnectionStringBuilder sb = new SQLiteConnectionStringBuilder();
             sb.DataSource = fpath;
             sb.ReadOnly = !writable;
-            return new SQLiteConnection(sb.ConnectionString);
+            var conn = new SQLiteConnection(sb.ConnectionString);
+            conn.Open();
+            return conn;
         }
 
         /// <summary>
@@ -1299,16 +1245,16 @@ namespace SQLiteTurbo
             return false;
         }
 
-		public static bool ConvertStringToBoolean(string boolValue)
-		{
-			var trueStrings = new List<String> { "1", "y", "yes", "true", "on", "j", "ja", "wahr" };
-			var falseStrings = new List<String> { "", "0", "n", "no", "false", "off", "n", "nein", "falsch" };
+        public static bool ConvertStringToBoolean(string boolValue)
+        {
+            var trueStrings = new List<String> { "1", "y", "yes", "true", "on", "j", "ja", "wahr" };
+            var falseStrings = new List<String> { "", "0", "n", "no", "false", "off", "n", "nein", "falsch" };
 
-			if (trueStrings.Any(s => s.Equals(boolValue, StringComparison.OrdinalIgnoreCase))) { return true; }
-			if (falseStrings.Any(s => s.Equals(boolValue, StringComparison.OrdinalIgnoreCase))) { return false; }
+            if (trueStrings.Any(s => s.Equals(boolValue, StringComparison.OrdinalIgnoreCase))) { return true; }
+            if (falseStrings.Any(s => s.Equals(boolValue, StringComparison.OrdinalIgnoreCase))) { return false; }
 
-			throw new FormatException($"Converting '{boolValue}' to Boolean failed!");
-		}
+            throw new FormatException($"Converting '{boolValue}' to Boolean failed!");
+        }
 
         #region Private Methods
         private static void PrepareConverters()
@@ -1319,6 +1265,7 @@ namespace SQLiteTurbo
             Dictionary<Type, ValueConverter> strcon = new Dictionary<Type, ValueConverter>();
             strcon.Add(typeof(byte[]), delegate(object value) { return Encoding.ASCII.GetString((byte[])value); });
             strcon.Add(typeof(bool), delegate(object value) { return (bool)value ? "1" : "0"; });
+            strcon.Add(typeof(DateTime), delegate (object value) { return ((DateTime)value).ToString("yyyy-MM-dd HH:mm:ss"); });
 
             _converters.Add(DbType.AnsiString, strcon);
             _converters.Add(DbType.AnsiStringFixedLength, strcon);
@@ -1354,7 +1301,7 @@ namespace SQLiteTurbo
             {
                 DateTime dt;
                 string str = (string)value;
-                if (DateTime.TryParse(str, out dt))
+                if (DateTime.TryParse(str, CultureInfo.InvariantCulture, DateTimeStyles.NoCurrentDateDefault, out dt))
                     return dt;
                 else
                 {
@@ -1440,7 +1387,7 @@ namespace SQLiteTurbo
             numcon.Add(typeof(string), delegate(object value) 
             {
                 long lval = 0;
-                long.TryParse((string)value, out lval);
+                long.TryParse((string)value, NumberStyles.Any, CultureInfo.InvariantCulture, out lval);
                 return lval; 
             });
             numcon.Add(typeof(DateTime), delegate(object value)
@@ -1466,7 +1413,7 @@ namespace SQLiteTurbo
             singcon.Add(typeof(string), delegate(object value)
             {
                 float fval = 0;
-                float.TryParse((string)value, out fval);
+                float.TryParse((string)value, NumberStyles.Any, CultureInfo.InvariantCulture, out fval);
                 return fval;
             });
             singcon.Add(typeof(DateTime), delegate(object value)
@@ -1487,7 +1434,7 @@ namespace SQLiteTurbo
             doubcon.Add(typeof(string), delegate(object value)
             {
                 double dval = 0;
-                double.TryParse((string)value, out dval);
+                double.TryParse((string)value, NumberStyles.Any, CultureInfo.InvariantCulture, out dval);
                 return dval;
             });
             doubcon.Add(typeof(float), delegate(object value)
@@ -1610,11 +1557,8 @@ namespace SQLiteTurbo
     public enum MemFormat
     {
         None = 0,
-
         KB = 1,
-
         MB = 2,
-
         GB = 3,
     }
 }

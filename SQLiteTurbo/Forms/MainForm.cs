@@ -1,14 +1,12 @@
 using System;
-using System.Threading;
+using System.Collections;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
+using System.Windows.Automation;
+using System.Windows.Automation.Provider;
+using System.Runtime.InteropServices;
 using SQLiteParser;
-using Common;
-using AutomaticUpdates;
 using log4net;
 
 namespace SQLiteTurbo
@@ -18,9 +16,97 @@ namespace SQLiteTurbo
     /// </summary>
     public partial class MainForm : Form
     {
+        [DllImport("user32.dll")]
+        public static extern int SetWindowLong(IntPtr hWnd, int nIndex, int dwNewLong);
+        [DllImport("user32.dll")]
+        public static extern int GetWindowLong(IntPtr hWnd, int nIndex);
+        [DllImport("user32.dll", SetLastError = true)]
+        private static extern IntPtr SetParent(IntPtr hWndChild, IntPtr hWndNewParent);
+
+        public static int GWL_STYLE = -16;
+        public static int WS_CHILD = 0x40000000;
+
+        public DialogResult ParseArguments(IList arguments)
+        {
+            var result = DialogResult.None;
+            var ctype = ComparisonType.CompareSchemaAndData;
+            var compareBlobFields = false;
+            int i;
+            if ((i = arguments.IndexOf("/ParentWindow")) != -1)
+            {
+                arguments.RemoveAt(i);
+                if (i < arguments.Count)
+                {
+                    IntPtr hwndParent = (IntPtr)Convert.ToInt64((string)arguments[i], 16);
+                    arguments.RemoveAt(i);
+                    FormBorderStyle = FormBorderStyle.None;
+                    CreateControl();
+                    SetWindowLong(Handle, GWL_STYLE, GetWindowLong(Handle, GWL_STYLE) | WS_CHILD);
+                    SetParent(Handle, hwndParent);
+                }
+            }
+            if ((i = arguments.IndexOf("/ShowCompareDialog")) != -1)
+            {
+                arguments.RemoveAt(i);
+                result = DialogResult.OK;
+            }
+            if ((i = arguments.IndexOf("/CompareSchemaOnly")) != -1)
+            {
+                arguments.RemoveAt(i);
+                ctype = ComparisonType.CompareSchemaOnly;
+            }
+            if ((i = arguments.IndexOf("/CompareBlobFields")) != -1)
+            {
+                arguments.RemoveAt(i);
+                compareBlobFields = true;
+            }
+            if (arguments.Count == 2)
+            {
+                _compareParams = new CompareParams((string)arguments[0], (string)arguments[1], ctype, compareBlobFields);
+            }
+            if (result != DialogResult.None)
+            {
+                CompareDialog dlg = new CompareDialog();
+                dlg.CompareParams = _compareParams;
+                result = dlg.ShowDialog();
+                _compareParams = dlg.CompareParams;
+            }
+            return result;
+        }
+
         public MainForm()
         {
             InitializeComponent();
+            toolStrip1.Renderer = new ToolStripRenderer();
+        }
+
+        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+        {
+            switch (keyData)
+            {
+                case Keys.Control | Keys.O:
+                    btnCompare.PerformClick();
+                    return true;
+                case Keys.Alt | Keys.Down:
+                    btnNextDiff.PerformClick();
+                    return true;
+                case Keys.Alt | Keys.Up:
+                    btnPreviousDiff.PerformClick();
+                    return true;
+                case Keys.Alt | Keys.Right:
+                    btnCopyFromLeftDB.PerformClick();
+                    return true;
+                case Keys.Alt | Keys.Left:
+                    btnCopyFromRightDB.PerformClick();
+                    return true;
+                case Keys.Alt | Keys.Enter:
+                    btnEditSelectedDifference.PerformClick();
+                    return true;
+                case Keys.Control | Keys.E:
+                    btnExportDataDifferences.PerformClick();
+                    return true;
+            }
+            return base.ProcessCmdKey(ref msg, keyData);
         }
 
         #region Event Handlers
@@ -40,6 +126,11 @@ namespace SQLiteTurbo
             HandleCompareDialog();
         }
 
+        private void mniRefresh_Click(object sender, EventArgs e)
+        {
+            RefreshComparison(true);
+        }
+
         private void mniCloseComparison_Click(object sender, EventArgs e)
         {
             CleanupSchemaView();
@@ -53,6 +144,13 @@ namespace SQLiteTurbo
         private void btnNextDiff_Click(object sender, EventArgs e)
         {
             _schemaView.MoveToNextDiff();
+        }
+
+        private void toolStripButton_EnabledChanged(object sender, EventArgs e)
+        {
+            AutomationEventArgs args = new AutomationEventArgs(InvokePatternIdentifiers.InvokedEvent);
+            var provider = AutomationInteropProvider.HostProviderFromHandle(toolStrip1.Handle);
+            AutomationInteropProvider.RaiseAutomationEvent(InvokePatternIdentifiers.InvokedEvent, provider, args);
         }
 
         private void btnPreviousDiff_Click(object sender, EventArgs e)
@@ -143,42 +241,21 @@ namespace SQLiteTurbo
         {
             UpdateTitle();
 
-            // The first time the software is ran - it should prompt the user if he wants to enable
-            // checking for software updates upon system startup
-            if (Configuration.FirstTime)
+            if (FormBorderStyle == FormBorderStyle.None)
             {
-                Configuration.FirstTime = false;
-
-                FirstTimeDialog fdlg = new FirstTimeDialog();
-                DialogResult res = fdlg.ShowDialog(this);
-                Configuration.CheckUpdatesOnStartup = fdlg.IsAutomaticUpdates;
-                if (res == DialogResult.OK)
-                {
-                    CheckUpdatesDialog cdlg = new CheckUpdatesDialog();
-                    cdlg.ShowDialog(this);
-                } // else
+                menuStrip1.Visible = false;
+                toolStrip1.Visible = false;
+                WindowState = FormWindowState.Maximized;
             }
-            else
+            else if (_compareParams != null)
             {
-                // Check for software updates if necessary
-                CheckSoftwareUpdates();
+                RefreshComparison(true);
             }
-        }
-
-        private void mniProductWebsite_Click(object sender, EventArgs e)
-        {
-            WebSiteUtils.OpenProductPage();
-        }
-
-        private void mniUserGuide_Click(object sender, EventArgs e)
-        {
-            WebSiteUtils.OpenUserGuidePage();
         }
 
         private void mniCheckForUpdates_Click(object sender, EventArgs e)
         {
-            CheckUpdatesDialog dlg = new CheckUpdatesDialog();
-            dlg.ShowDialog(this);
+            WebSiteUtils.OpenReleasesPage();
         }
 
         private void btnExportDataDifferences_Click(object sender, EventArgs e)
@@ -224,14 +301,15 @@ namespace SQLiteTurbo
                     _schemaView.SelectionChanged += new EventHandler(_schemaView_SelectionChanged);
                 }
 
+                _schemaView.ShowComparisonResults(results, _compareParams.LeftDbPath, _compareParams.RightDbPath,
+                    worker.LeftSchema, worker.RightSchema, _compareParams.ComparisonType == ComparisonType.CompareSchemaAndData);
+
                 _leftSchema = worker.LeftSchema;
                 _rightSchema = worker.RightSchema;
+                SchemaComparisonItem.CleanupTempFiles(_results);
                 _results = results;
                 _leftdb = _compareParams.LeftDbPath;
                 _rightdb = _compareParams.RightDbPath;
-
-                _schemaView.ShowComparisonResults(results, _compareParams.LeftDbPath, _compareParams.RightDbPath,
-                    worker.LeftSchema, worker.RightSchema, _compareParams.ComparisonType == ComparisonType.CompareSchemaAndData);
             }
 
             UpdateState();
@@ -259,7 +337,7 @@ namespace SQLiteTurbo
             _results = null;
 
             UpdateState();
-		}
+        }
 
         private void UpdateState()
         {
@@ -274,17 +352,10 @@ namespace SQLiteTurbo
             mniGotoNextDifference.Enabled = _schemaView != null && _schemaView.HasNextDiff();
             mniGotoPreviousDifference.Enabled = _schemaView != null && _schemaView.HasPreviousDiff();        
 
-            #region Allow change script generation only to commercial/evaluation users
-
-            bool allowedGenerateScripts = false;
-            allowedGenerateScripts = true;
-
-            mniGenerateChangeScriptLeftToRight.Enabled = _schemaView != null && allowedGenerateScripts;
-            mniGenerateChangeScriptRightToLeft.Enabled = _schemaView != null && allowedGenerateScripts;
+            mniGenerateChangeScriptLeftToRight.Enabled = _schemaView != null;
+            mniGenerateChangeScriptRightToLeft.Enabled = _schemaView != null;
             mniCloseComparison.Enabled = _schemaView != null;
-            btnExportDataDifferences.Enabled = _schemaView != null && _schemaView.HasDataDiffs() && allowedGenerateScripts;
-
-            #endregion
+            btnExportDataDifferences.Enabled = _schemaView != null && _schemaView.HasDataDiffs();
         }
 
         private void HandleCompareDialog()
@@ -300,60 +371,9 @@ namespace SQLiteTurbo
             RefreshComparison(true);
         }
 
-        /// <summary>
-        /// Check if there are software updates and show the updates dialog if necessary
-        /// </summary>
-        private void CheckSoftwareUpdates()
-        {
-            // Check for software updates if necessary
-            if (Configuration.CheckUpdatesOnStartup)
-            {
-                mniCheckForUpdates.Enabled = false;
-                WaitCallback wc = delegate
-                {
-                    try
-                    {
-                        //List<VersionUpdateInfo> vlist = UpdateEngine.CheckForUpdates();
-                        List<VersionUpdateInfo> vlist = null;
-                        if (vlist != null)
-                        {
-                            // There are updates waiting
-                            Invoke(new MethodInvoker(delegate
-                            {
-                                CheckUpdatesDialog cdlg = new CheckUpdatesDialog();
-                                cdlg.ShowDownloadPage(this, vlist);
-                            }));
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        _log.Warn("failed to check for software updates", ex);
-                    } // catch
-                    finally
-                    {
-                        // The window may have been disposed as a result of shutting down the application.
-                        if (!UpdateEngine.IsReInstalling)
-                        {
-                            try
-                            {
-                                Invoke(new MethodInvoker(delegate
-                                {
-                                    mniCheckForUpdates.Enabled = true;
-                                }));
-                            }
-                            catch (ObjectDisposedException ode)
-                            {
-                                // Ignore
-                            }
-                        } // if
-                    } // finally
-                };
-                ThreadPool.QueueUserWorkItem(wc);
-            }
-        }
         #endregion
 
-        #region Private Variables       
+        #region Private Variables
         private SchemaComparisonView _schemaView = null;
         private CompareParams _compareParams = null;
         private string _leftdb;

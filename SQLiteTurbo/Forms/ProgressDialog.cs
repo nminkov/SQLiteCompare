@@ -6,7 +6,6 @@ using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 using log4net;
-using Common;
 
 namespace SQLiteTurbo
 {

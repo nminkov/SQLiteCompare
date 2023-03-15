@@ -48,26 +48,6 @@ namespace SQLiteTurbo
         }
 
         /// <summary>
-        /// Used to check if this is the first time the utility is ran
-        /// </summary>
-        public static bool FirstTime
-        {
-            get
-            {
-                object tmp = Registry.GetValue(SQLITE_REG_KEY, FIRST_TIME_VAL, null);
-                if (tmp == null)
-                    return true;
-                else
-                    return false;
-            }
-
-            set
-            {
-                Registry.SetValue(SQLITE_REG_KEY, FIRST_TIME_VAL, (value?1:0));
-            }
-        }
-
-        /// <summary>
         /// Returns the last used left-db path
         /// </summary>
         public static string LastUsedLeftDbPath

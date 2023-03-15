@@ -45,5 +45,7 @@ they are compared using a fast algorithm that does not load the entire BLOB into
 4. Currently it is not possible to compare tables that have mismatching primary keys. For example - it is not possible to compare two tables where table A has a primary key composed from two integers while table B has a primary key composed of a single integer.
 
 
-Enjoy :-)
+Enjoy :-)  
 Liron Levi
+
+![SQLite Compare main window](Screenshots/SQLiteCompareMainWindow.png)

@@ -177,6 +177,8 @@
 %token TEMP
 %token AND
 %token TEMPORARY
+%token NO
+%token ACTION
 
 %type <Text> nm
 %type <Text> dbnm
@@ -548,6 +550,7 @@ refact : SET NULL							{ $$ = SQLiteReferenceAction.SetNull; }
 	| SET DEFAULT							{ $$ = SQLiteReferenceAction.SetDefault; }
 	| CASCADE								{ $$ = SQLiteReferenceAction.Cascade; }
 	| RESTRICT								{ $$ = SQLiteReferenceAction.Restrict; }
+	| NO ACTION								{ $$ = SQLiteReferenceAction.None; }
 	;
 
 defer_subclause : NOT DEFERRABLE init_deferred_pred_opt

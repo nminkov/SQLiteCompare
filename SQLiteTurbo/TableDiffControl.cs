@@ -1,7 +1,6 @@
 using System;
 using System.IO;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Drawing;
 using System.Data;
 using System.Text;
@@ -499,38 +498,37 @@ namespace SQLiteTurbo
             // Extract the current field value from the change item
             object value = GetRowFieldValue(citem, right, columnName);
 
+            FileStream fs = null;
+
             // Adjust the BLOB value since it was fetched as the IS NOT NULL expression
             // in order to avoid loading the BLOB field into main memory.
             if (Utils.GetDbType(column.ColumnType) == DbType.Binary)
             {
-                long v = (long)value;
-                if (v == 0) // means NULL
-                    value = DBNull.Value;
-            }
-
-            // When the user is clicking on a BLOB field - we need to extract its value
-            // to a local file before opening the cell-edit dialog.
-            Be.Windows.Forms.DynamicFileByteProvider origProvider = null;
-            if (value != DBNull.Value && Utils.GetDbType(column.ColumnType) == DbType.Binary)
-            {
                 // In case of BLOBs - we have to first load them to the local file-system and
                 // only then we can allow the user to edit their contents
-                using (BlobLoader loader = new BlobLoader(dbpath,
-                    table.ObjectName.ToString(), column.ObjectName.ToString(), rowId, Configuration.TempBlobFilePath))
+                fs = new FileStream(Configuration.TempBlobFilePath, FileMode.Create,
+                    FileAccess.ReadWrite, FileShare.ReadWrite, 4096, FileOptions.DeleteOnClose);
+
+                if (!value.Equals("1"))
+                    value = DBNull.Value;
+
+                if (value != DBNull.Value)
                 {
-                    ProgressDialog dlg = new ProgressDialog();
-                    dlg.Start(this, loader);
+                    using (BlobLoader loader = new BlobLoader(dbpath,
+                        table.ObjectName.ToString(), column.ObjectName.ToString(), rowId, fs))
+                    {
+                        ProgressDialog dlg = new ProgressDialog();
+                        dlg.Start(this, loader);
 
-                    if (dlg.Error != null)
-                        return;
-                } // using
-
+                        if (dlg.Error != null)
+                            return;
+                    } // using
+                }
                 // Instead of passing a byte[] array to the cell editor dialog - we'll pass
                 // a reference to the dynamic file byte provider that is opened on the data file
                 // that was written with the BLOB data. This allows us to conserve memory (BLOB
                 // fields can be quite large).
-                origProvider = new Be.Windows.Forms.DynamicFileByteProvider(Configuration.TempBlobFilePath);
-                value = origProvider;
+                value = new Be.Windows.Forms.DynamicFileByteProvider(fs);
             }
 
             // Open the cell editor dialog and allow the user to edit the contents of the field.
@@ -544,6 +542,7 @@ namespace SQLiteTurbo
             {
                 if (otherBlob != null && (citem.Result == ComparisonResult.Same || citem.Result == ComparisonResult.DifferentData))
                 {
+                    /*
                     if (otherBlob is long)
                     {
                         // Another adjustment for the other BLOB field value
@@ -551,24 +550,22 @@ namespace SQLiteTurbo
                         if (ob == 0) // means NULL blob field
                             otherBlob = DBNull.Value;
                     }
+                    */
+                    if (Utils.GetDbType(column.ColumnType) == DbType.Binary)
+                    {
+                        if (otherBlob.Equals("0"))
+                            otherBlob = DBNull.Value;
+                    }
+
                 }
 
                 if (value != DBNull.Value)
                 {
-                    string fpath = null;
-                    long blobLength = 0;
-                    if (value is Be.Windows.Forms.DynamicFileByteProvider)
-                    {
-                        Be.Windows.Forms.DynamicFileByteProvider dp = (Be.Windows.Forms.DynamicFileByteProvider)value;
-                        if (dp.HasChanges())
-                            dp.ApplyChanges();
-                        dp.Dispose();
-
-						blobLength = dp.Length;
-
-					}
-                    else
+                    if (!(value is Be.Windows.Forms.DynamicFileByteProvider))
                         throw new InvalidOperationException("cell editor returned unexpected value");
+                    Be.Windows.Forms.DynamicFileByteProvider dp = (Be.Windows.Forms.DynamicFileByteProvider)value;
+                    if (dp.HasChanges())
+                        dp.ApplyChanges();
 
                     BlobSaver saver = null;
                     try
@@ -578,7 +575,7 @@ namespace SQLiteTurbo
                         // the one in the other database.
 
                         // Save the file specified in the call as a BLOB
-                        saver = new BlobSaver(dbpath, table.ObjectName.ToString(), column.ObjectName.ToString(), rowId, fpath);
+                        saver = new BlobSaver(dbpath, table.ObjectName.ToString(), column.ObjectName.ToString(), rowId, fs);
 
                         ProgressDialog dlg = new ProgressDialog();
                         dlg.Start(this, saver);
@@ -593,12 +590,14 @@ namespace SQLiteTurbo
                     }
                     finally
                     {
+                        dp.Dispose();
                         saver.Dispose();
                     } // finally
 
                     // Update the table change item with an indication that the BLOB field that was just saved
                     // is not null.
-                    citem.SetField(column.ObjectName.ToString(), !right, (long)1);
+                    //citem.SetField(column.ObjectName.ToString(), !right, (long)1);
+                    citem.SetField(column.ObjectName.ToString(), !right, "1");
 
                     if (otherBlob != null && (citem.Result == ComparisonResult.DifferentData || citem.Result == ComparisonResult.Same))
                     {
@@ -815,8 +814,7 @@ namespace SQLiteTurbo
                     }
                     else if (Utils.GetDbType(col.ColumnType) == DbType.Binary)
                     {
-                        long v = (long)fval;
-                        if (v == 1)
+                        if (fval.Equals("1"))
                             row.Cells[i].Value = "BLOB";
                         else
                             row.Cells[i].Value = "NULL";

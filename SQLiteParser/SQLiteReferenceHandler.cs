@@ -59,6 +59,9 @@ namespace SQLiteParser
                 case SQLiteReferenceAction.Restrict:
                     sb.Append("RESTRICT");
                     break;
+                case SQLiteReferenceAction.None:
+                    sb.Append("NO ACTION");
+                    break;
                 default:
                     throw new ArgumentException("illegal reference action [" + _action.ToString() + "]");
             } // switch
